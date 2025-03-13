@@ -32,8 +32,8 @@ export const PlatformSelector = ({
         const getBgClass = () => {
           if (platform === 'all') {
             return isSelected 
-              ? 'bg-gradient-to-r from-primary to-primary/90 text-primary-foreground' 
-              : 'bg-secondary hover:bg-secondary/80 text-secondary-foreground';
+              ? 'bg-gradient-to-r from-platform-talabat via-platform-careem to-platform-deliveroo text-white' 
+              : 'bg-gradient-to-r from-platform-talabat/30 via-platform-careem/30 to-platform-deliveroo/30 text-gray-700 hover:text-white hover:from-platform-talabat/70 hover:via-platform-careem/70 hover:to-platform-deliveroo/70';
           }
           
           return isSelected 
@@ -43,7 +43,16 @@ export const PlatformSelector = ({
         
         // Add platform icon or indicator
         const getPlatformIndicator = () => {
-          if (platform === 'all') return null;
+          if (platform === 'all') {
+            return (
+              <div className="flex items-center mr-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-platform-talabat mx-0.5"></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-platform-careem mx-0.5"></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-platform-noon mx-0.5"></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-platform-deliveroo mx-0.5"></span>
+              </div>
+            );
+          }
           
           return (
             <div className={cn(
