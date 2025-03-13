@@ -1,12 +1,96 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState, useRef, useEffect } from 'react';
+import { Platform } from '@/utils/mockData';
+import PlatformSelector from '@/components/PlatformSelector';
+import MenuSummary from '@/components/MenuSummary';
+import MenuPerformance from '@/components/MenuPerformance';
+import MenuItems from '@/components/MenuItems';
+import MenuGeography from '@/components/MenuGeography';
+import { cn } from '@/lib/utils';
 
 const Index = () => {
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform>('all');
+  const [pageLoaded, setPageLoaded] = useState(false);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Handle platform selection
+  const handlePlatformChange = (platform: Platform) => {
+    setSelectedPlatform(platform);
+    
+    // Scroll the content up slightly for better UX when changing platforms
+    if (contentRef.current) {
+      const offset = headerRef.current?.offsetHeight || 0;
+      window.scrollTo({
+        top: offset,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  useEffect(() => {
+    // Page mount animation
+    setTimeout(() => {
+      setPageLoaded(true);
+    }, 100);
+  }, []);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background">
+      <div 
+        ref={headerRef} 
+        className={cn(
+          "sticky top-0 z-10 backdrop-blur-lg bg-background/80 border-b border-border/40 transition-all duration-500",
+          !pageLoaded && "opacity-0 -translate-y-4",
+          pageLoaded && "opacity-100 translate-y-0"
+        )}
+      >
+        <div className="container max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h1 className="text-2xl font-medium tracking-tight">Menu Analytics</h1>
+              <p className="text-muted-foreground mt-1">Performance insights across delivery platforms</p>
+            </div>
+            
+            <PlatformSelector 
+              selectedPlatform={selectedPlatform}
+              onSelectPlatform={handlePlatformChange}
+              className="md:px-2"
+            />
+          </div>
+        </div>
       </div>
+      
+      <main 
+        ref={contentRef}
+        className={cn(
+          "container max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 transition-opacity duration-500",
+          !pageLoaded && "opacity-0",
+          pageLoaded && "opacity-100"
+        )}
+      >
+        <div className="space-y-8">
+          {/* Menu metrics summary */}
+          <section>
+            <MenuSummary platform={selectedPlatform} />
+          </section>
+          
+          {/* Menu performance */}
+          <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <MenuPerformance platform={selectedPlatform} />
+            </div>
+            <div className="lg:col-span-1">
+              <MenuGeography platform={selectedPlatform} />
+            </div>
+          </section>
+          
+          {/* Full menu items (collapsible) */}
+          <section>
+            <MenuItems platform={selectedPlatform} />
+          </section>
+        </div>
+      </main>
     </div>
   );
 };
