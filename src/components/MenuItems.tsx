@@ -55,11 +55,14 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
 
   const themeColor = platform !== 'all' ? `text-platform-${platform}` : 'text-primary';
   const buttonBg = platform !== 'all' ? `bg-platform-${platform} hover:bg-platform-${platform}/90` : 'bg-primary hover:bg-primary/90';
+  const headerGradient = platform !== 'all' 
+    ? `bg-gradient-to-r from-platform-${platform}/20 to-transparent` 
+    : 'bg-gradient-to-r from-primary/10 to-transparent';
 
   return (
-    <Card className={cn("shadow-sm", className)}>
+    <Card className={cn("shadow-sm overflow-hidden border-t-4", platform !== 'all' ? `border-t-platform-${platform}` : 'border-t-primary', className)}>
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <CardHeader className="pb-3 flex flex-row items-center justify-between">
+        <CardHeader className={cn("pb-3 flex flex-row items-center justify-between", headerGradient)}>
           <CardTitle className="text-xl flex items-center">
             <List className="h-5 w-5 mr-2" />
             Complete Menu Analysis
@@ -92,7 +95,10 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
                   )}
                 >
                   <div 
-                    className="flex items-center justify-between p-4 bg-muted/30 cursor-pointer hover:bg-muted/50 transition-colors"
+                    className={cn(
+                      "flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50 transition-colors",
+                      categoryExpanded[category] ? headerGradient : "bg-muted/30"
+                    )}
                     onClick={() => toggleCategory(category)}
                   >
                     <h3 className="font-medium">{category}</h3>
@@ -107,7 +113,7 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
                   {categoryExpanded[category] && (
                     <div className="overflow-x-auto">
                       <table className="w-full caption-bottom text-sm">
-                        <thead className="[&_tr]:border-b">
+                        <thead className="[&_tr]:border-b bg-muted/20">
                           <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                             <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Item</th>
                             <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Price</th>
@@ -131,6 +137,7 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
                                     !categoryExpanded[category] && "opacity-0 h-0",
                                     categoryExpanded[category] && "opacity-100",
                                     "transition-all duration-300 ease-out",
+                                    index % 2 === 0 ? "bg-white" : "bg-muted/10",
                                     {
                                       "delay-[0ms]": index === 0,
                                       "delay-[50ms]": index === 1,

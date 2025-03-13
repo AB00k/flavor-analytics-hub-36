@@ -28,6 +28,17 @@ const Index = () => {
     }
   };
 
+  // Get platform-specific gradient
+  const getPlatformGradient = () => {
+    switch(selectedPlatform) {
+      case 'talabat': return 'bg-gradient-to-b from-platform-talabat/5 to-transparent';
+      case 'careem': return 'bg-gradient-to-b from-platform-careem/5 to-transparent';
+      case 'noon': return 'bg-gradient-to-b from-platform-noon/5 to-transparent';
+      case 'deliveroo': return 'bg-gradient-to-b from-platform-deliveroo/5 to-transparent';
+      default: return 'bg-gradient-to-b from-primary/5 to-transparent';
+    }
+  };
+
   useEffect(() => {
     // Page mount animation
     setTimeout(() => {
@@ -36,11 +47,12 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={cn("min-h-screen bg-background", getPlatformGradient())}>
       <div 
         ref={headerRef} 
         className={cn(
-          "sticky top-0 z-10 backdrop-blur-lg bg-background/80 border-b border-border/40 transition-all duration-500",
+          "sticky top-0 z-10 backdrop-blur-lg bg-background/90 border-b transition-all duration-500",
+          selectedPlatform !== 'all' ? `border-platform-${selectedPlatform}/20` : 'border-border/40',
           !pageLoaded && "opacity-0 -translate-y-4",
           pageLoaded && "opacity-100 translate-y-0"
         )}
@@ -48,7 +60,12 @@ const Index = () => {
         <div className="container max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h1 className="text-2xl font-medium tracking-tight">Menu Analytics</h1>
+              <h1 className={cn(
+                "text-2xl font-medium tracking-tight",
+                selectedPlatform !== 'all' ? `text-platform-${selectedPlatform}` : ''
+              )}>
+                Menu Analytics
+              </h1>
               <p className="text-muted-foreground mt-1">Performance insights across delivery platforms</p>
             </div>
             
