@@ -58,18 +58,19 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
 
   return (
     <Card className={cn("shadow-sm", className)}>
-      <CardHeader className="pb-3 flex flex-row items-center justify-between">
-        <CardTitle className="text-xl flex items-center">
-          <List className="h-5 w-5 mr-2" />
-          Complete Menu Analysis
-        </CardTitle>
-        <CollapsibleTrigger asChild onClick={() => setIsOpen(!isOpen)}>
-          <Button variant="ghost" size="sm" className="w-9 p-0">
-            {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </Button>
-        </CollapsibleTrigger>
-      </CardHeader>
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <CardHeader className="pb-3 flex flex-row items-center justify-between">
+          <CardTitle className="text-xl flex items-center">
+            <List className="h-5 w-5 mr-2" />
+            Complete Menu Analysis
+          </CardTitle>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm" className="w-9 p-0">
+              {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </Button>
+          </CollapsibleTrigger>
+        </CardHeader>
+        
         <CollapsibleContent>
           <CardContent>
             <div className="rounded-md border overflow-hidden">
@@ -169,6 +170,7 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
           </CardContent>
         </CollapsibleContent>
       </Collapsible>
+      
       {!isOpen && (
         <CardContent className="pt-0">
           <Button 
