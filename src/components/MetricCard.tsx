@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import AnimatedBar from './AnimatedBar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 interface MetricCardProps {
   title: string;
   value: number;
   icon?: React.ReactNode;
-  description?: string;
   className?: string;
   showBar?: boolean;
   barColor?: string;
@@ -20,7 +20,6 @@ export const MetricCard = ({
   title,
   value,
   icon,
-  description,
   className,
   showBar = false,
   barColor = "bg-primary",
@@ -45,19 +44,24 @@ export const MetricCard = ({
       className
     )}>
       <CardContent className="p-6">
-        <div className="flex items-start justify-between mb-4">
+        <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
-          {icon && <div className="text-muted-foreground">{icon}</div>}
+          {icon && (
+            <Avatar className="h-10 w-10 bg-muted text-primary">
+              <AvatarFallback className={cn(
+                "text-white",
+                barColor !== "bg-primary" && barColor.replace("bg-", "text-")
+              )}>
+                {icon}
+              </AvatarFallback>
+            </Avatar>
+          )}
         </div>
         
         <div className="space-y-2">
           <p className="text-3xl font-light">
             {isPercentage ? `${value}%` : value.toLocaleString()}
           </p>
-          
-          {description && (
-            <p className="text-sm text-muted-foreground">{description}</p>
-          )}
           
           {showBar && (
             <div className="mt-4">

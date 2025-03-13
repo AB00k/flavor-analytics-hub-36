@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
-import { BarChart, PieChart, Activity, Image, FileText, CheckCircle } from 'lucide-react';
-import { Platform, calculateMenuMetrics, platformLightColors } from '@/utils/mockData';
+import { BarChart, Image, FileText, CheckCircle } from 'lucide-react';
+import { Platform, calculateMenuMetrics } from '@/utils/mockData';
 import { cn } from '@/lib/utils';
 import MetricCard from './MetricCard';
 
@@ -43,7 +43,6 @@ export const MenuSummary = ({ platform, className }: MenuSummaryProps) => {
         title="Menu Conversion Rate"
         value={metrics.conversionRate}
         icon={<BarChart className="h-5 w-5" />}
-        description="Items with photos and descriptions"
         showBar={true}
         barColor={barColor}
         isPercentage={true}
@@ -54,7 +53,6 @@ export const MenuSummary = ({ platform, className }: MenuSummaryProps) => {
         title="Menu Items with Photos"
         value={metrics.photoPercentage}
         icon={<Image className="h-5 w-5" />}
-        description="Percentage of items with photos"
         showBar={true}
         barColor={barColor}
         isPercentage={true}
@@ -65,7 +63,6 @@ export const MenuSummary = ({ platform, className }: MenuSummaryProps) => {
         title="Menu Items with Descriptions"
         value={metrics.descriptionPercentage}
         icon={<FileText className="h-5 w-5" />}
-        description="Percentage of items with descriptions"
         showBar={true}
         barColor={barColor}
         isPercentage={true}
@@ -76,7 +73,6 @@ export const MenuSummary = ({ platform, className }: MenuSummaryProps) => {
         title="Menu Completeness"
         value={metrics.completenessPercentage}
         icon={<CheckCircle className="h-5 w-5" />}
-        description="Overall menu completeness"
         showBar={true}
         barColor={barColor}
         isPercentage={true}
