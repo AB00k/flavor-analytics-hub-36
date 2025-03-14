@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { List, ChevronDown, ChevronUp, Check, X } from 'lucide-react';
+import { List, ChevronDown, ChevronUp, Check, X, PieChart, ArrowUpDown, DollarSign, ShoppingCart } from 'lucide-react';
 import { Platform, mockMenuItems, platformNames } from '@/utils/mockData';
 import { cn } from '@/lib/utils';
 
@@ -12,11 +12,19 @@ interface MenuItemsProps {
   className?: string;
 }
 
+interface CategorySummary {
+  avgPrice: number;
+  totalSales: number;
+  totalRevenue: number;
+  itemCount: number;
+}
+
 export const MenuItems = ({ platform, className }: MenuItemsProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [categories, setCategories] = useState<string[]>([]);
   const [categoryExpanded, setCategoryExpanded] = useState<Record<string, boolean>>({});
   const [loaded, setLoaded] = useState(false);
+  const [categorySummaries, setCategorySummaries] = useState<Record<string, CategorySummary>>({});
 
   useEffect(() => {
     // Reset animation state when platform changes
@@ -32,6 +40,32 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
       return acc;
     }, {} as Record<string, boolean>);
     setCategoryExpanded(initialCategoryState);
+    
+    // Calculate category summaries
+    const summaries: Record<string, CategorySummary> = {};
+    
+    uniqueCategories.forEach(category => {
+      const categoryItems = mockMenuItems.filter(
+        item => item.category === category && item.isActive[platform]
+      );
+      
+      if (categoryItems.length > 0) {
+        const totalPrice = categoryItems.reduce((sum, item) => sum + item.price, 0);
+        const totalSales = categoryItems.reduce((sum, item) => sum + item.salesCount[platform], 0);
+        const totalRevenue = categoryItems.reduce(
+          (sum, item) => sum + (item.price * item.salesCount[platform]), 0
+        );
+        
+        summaries[category] = {
+          avgPrice: totalPrice / categoryItems.length,
+          totalSales: totalSales,
+          totalRevenue: totalRevenue,
+          itemCount: categoryItems.length
+        };
+      }
+    });
+    
+    setCategorySummaries(summaries);
     
     setTimeout(() => {
       setLoaded(true);
@@ -101,13 +135,34 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
                     )}
                     onClick={() => toggleCategory(category)}
                   >
-                    <h3 className="font-medium">{category}</h3>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      {categoryExpanded[category] ? 
-                        <ChevronUp className="h-4 w-4" /> : 
-                        <ChevronDown className="h-4 w-4" />
-                      }
-                    </Button>
+                    <div className="flex items-center space-x-2">
+                      <h3 className="font-medium">{category}</h3>
+                      <span className="text-xs text-muted-foreground">({categorySummaries[category]?.itemCount || 0} items)</span>
+                    </div>
+                    <div className="flex items-center space-x-6">
+                      {/* Category summary metrics */}
+                      <div className="flex items-center space-x-4 text-sm">
+                        <div className={cn("flex items-center", themeColor)}>
+                          <DollarSign className="h-3.5 w-3.5 mr-1" />
+                          <span>{formatCurrency(categorySummaries[category]?.avgPrice || 0)}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <ShoppingCart className="h-3.5 w-3.5 mr-1" />
+                          <span>{categorySummaries[category]?.totalSales || 0}</span>
+                        </div>
+                        <div className={cn("font-medium flex items-center", themeColor)}>
+                          <PieChart className="h-3.5 w-3.5 mr-1" />
+                          <span>{formatCurrency(categorySummaries[category]?.totalRevenue || 0)}</span>
+                        </div>
+                      </div>
+                      
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        {categoryExpanded[category] ? 
+                          <ChevronUp className="h-4 w-4" /> : 
+                          <ChevronDown className="h-4 w-4" />
+                        }
+                      </Button>
+                    </div>
                   </div>
                   
                   {categoryExpanded[category] && (

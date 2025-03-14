@@ -35,6 +35,24 @@ export const MetricCard = ({
     
     return () => clearTimeout(timer);
   }, [index]);
+  
+  // Determine icon background color based on barColor
+  const getIconBgColor = () => {
+    switch(barColor) {
+      case 'bg-platform-talabat': return 'bg-[#FF5A00]';
+      case 'bg-platform-careem': return 'bg-[#4BB543]';
+      case 'bg-platform-noon': return 'bg-[#FEEE00]';
+      case 'bg-platform-deliveroo': return 'bg-[#00CCBC]';
+      default: return 'bg-gradient-to-br from-primary to-purple-600';
+    }
+  };
+  
+  // Determine icon text color
+  const getIconTextColor = () => {
+    // For noon (yellow), use dark text for better contrast
+    if (barColor === 'bg-platform-noon') return 'text-gray-800';
+    return 'text-white';
+  };
 
   return (
     <Card className={cn(
@@ -47,11 +65,11 @@ export const MetricCard = ({
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
           {icon && (
-            <Avatar className="h-10 w-10 bg-muted text-primary">
-              <AvatarFallback className={cn(
-                "text-white",
-                barColor !== "bg-primary" && barColor.replace("bg-", "text-")
-              )}>
+            <Avatar className={cn(
+              "h-10 w-10",
+              getIconBgColor()
+            )}>
+              <AvatarFallback className={getIconTextColor()}>
                 {icon}
               </AvatarFallback>
             </Avatar>
