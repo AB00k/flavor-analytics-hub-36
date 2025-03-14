@@ -2,8 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import AnimatedBar from './AnimatedBar';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Progress } from '@/components/ui/progress';
 
 interface MetricCardProps {
   title: string;
@@ -14,6 +13,7 @@ interface MetricCardProps {
   barColor?: string;
   isPercentage?: boolean;
   index?: number; // For staggered animation
+  trend?: { value: number; isPositive: boolean };
 }
 
 export const MetricCard = ({
@@ -24,9 +24,11 @@ export const MetricCard = ({
   showBar = false,
   barColor = "bg-primary",
   isPercentage = false,
-  index = 0
+  index = 0,
+  trend
 }: MetricCardProps) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [progressValue, setProgressValue] = useState(0);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -36,6 +38,14 @@ export const MetricCard = ({
     return () => clearTimeout(timer);
   }, [index]);
   
+  useEffect(() => {
+    if (isVisible && showBar) {
+      setTimeout(() => {
+        setProgressValue(value);
+      }, 300);
+    }
+  }, [isVisible, value, showBar]);
+  
   // Determine icon background color based on barColor
   const getIconBgColor = () => {
     switch(barColor) {
@@ -43,7 +53,7 @@ export const MetricCard = ({
       case 'bg-platform-careem': return 'bg-[#4BB543]';
       case 'bg-platform-noon': return 'bg-[#FEEE00]';
       case 'bg-platform-deliveroo': return 'bg-[#00CCBC]';
-      default: return 'bg-gradient-to-br from-primary to-purple-600';
+      default: return 'bg-primary';
     }
   };
   
@@ -54,6 +64,17 @@ export const MetricCard = ({
     return 'text-white';
   };
 
+  // Get progress bar color
+  const getProgressColor = () => {
+    switch(barColor) {
+      case 'bg-platform-talabat': return 'bg-[#FF5A00]';
+      case 'bg-platform-careem': return 'bg-[#4BB543]';
+      case 'bg-platform-noon': return 'bg-[#FEEE00]';
+      case 'bg-platform-deliveroo': return 'bg-[#00CCBC]';
+      default: return 'bg-primary';
+    }
+  };
+
   return (
     <Card className={cn(
       "overflow-hidden h-full transition-all duration-500 hover:shadow-md",
@@ -62,34 +83,52 @@ export const MetricCard = ({
       className
     )}>
       <CardContent className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
+        <div className="flex items-start gap-4">
+          {/* Left side - Icon */}
           {icon && (
-            <Avatar className={cn(
-              "h-10 w-10",
+            <div className={cn(
+              "h-12 w-12 rounded-full flex items-center justify-center shrink-0",
               getIconBgColor()
             )}>
-              <AvatarFallback className={getIconTextColor()}>
+              <div className={getIconTextColor()}>
                 {icon}
-              </AvatarFallback>
-            </Avatar>
-          )}
-        </div>
-        
-        <div className="space-y-2">
-          <p className="text-3xl font-light">
-            {isPercentage ? `${value}%` : value.toLocaleString()}
-          </p>
-          
-          {showBar && (
-            <div className="mt-4">
-              <AnimatedBar 
-                value={value} 
-                color={barColor} 
-                height={6} 
-              />
+              </div>
             </div>
           )}
+          
+          {/* Right side - Content */}
+          <div className="space-y-2 flex-1">
+            {/* Trend indicator if provided */}
+            {trend && (
+              <div className={cn(
+                "text-xs font-medium",
+                trend.isPositive ? "text-green-500" : "text-red-500"
+              )}>
+                {trend.isPositive ? "↗" : "↘"} {trend.value > 0 ? "+" : ""}{trend.value}
+              </div>
+            )}
+            
+            {/* Title */}
+            <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
+            
+            {/* Value */}
+            <p className="text-3xl font-bold">
+              {isPercentage ? `${value}%` : value.toLocaleString()}
+            </p>
+            
+            {/* Progress bar */}
+            {showBar && (
+              <div className="mt-3">
+                <Progress 
+                  value={progressValue} 
+                  className="h-1.5 bg-muted"
+                  style={{ 
+                    '--progress-background': getProgressColor()
+                  } as React.CSSProperties}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

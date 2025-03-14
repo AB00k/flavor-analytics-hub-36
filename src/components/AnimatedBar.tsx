@@ -1,6 +1,7 @@
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { Progress } from '@/components/ui/progress';
 
 interface AnimatedBarProps {
   value: number;
@@ -23,13 +24,28 @@ export const AnimatedBar = ({
   showValue = false,
   label
 }: AnimatedBarProps) => {
-  const barRef = useRef<HTMLDivElement>(null);
+  const [progressValue, setProgressValue] = useState(animated ? 0 : value);
   
   useEffect(() => {
-    if (barRef.current) {
-      barRef.current.style.setProperty('--progress-width', `${(value / maxValue) * 100}%`);
+    if (animated) {
+      const timer = setTimeout(() => {
+        setProgressValue(value);
+      }, 300);
+      return () => clearTimeout(timer);
     }
-  }, [value, maxValue]);
+  }, [animated, value]);
+
+  // Convert color class to CSS variable value
+  const getProgressColor = () => {
+    switch(color) {
+      case 'bg-platform-talabat': return '#FF5A00';
+      case 'bg-platform-careem': return '#4BB543';
+      case 'bg-platform-noon': return '#FEEE00';
+      case 'bg-platform-deliveroo': return '#00CCBC';
+      case 'bg-primary': return 'hsl(var(--primary))';
+      default: return 'hsl(var(--primary))';
+    }
+  };
 
   return (
     <div className="w-full">
@@ -39,23 +55,16 @@ export const AnimatedBar = ({
           {showValue && <span className="font-medium">{value}%</span>}
         </div>
       )}
-      <div 
-        className={cn("w-full rounded-full bg-muted/30 overflow-hidden", className)}
-        style={{ height: `${height}px` }}
-      >
-        <div
-          ref={barRef}
-          className={cn(
-            color,
-            "h-full rounded-full",
-            animated ? "animate-progress-fill" : ""
-          )}
-          style={{ 
-            width: animated ? '0%' : `${(value / maxValue) * 100}%`,
-            transition: animated ? 'none' : 'width 0.5s ease-out'
-          }}
-        ></div>
-      </div>
+      
+      <Progress 
+        value={progressValue} 
+        className={cn("bg-muted/30", className)}
+        style={{ 
+          height: `${height}px`,
+          '--progress-background': getProgressColor()
+        } as React.CSSProperties}
+      />
+      
       {!label && showValue && (
         <div className="mt-1 text-xs text-right text-muted-foreground">
           {value}%
