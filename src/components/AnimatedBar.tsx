@@ -35,18 +35,6 @@ export const AnimatedBar = ({
     }
   }, [animated, value]);
 
-  // Convert color class to CSS variable value
-  const getProgressColor = () => {
-    switch(color) {
-      case 'bg-platform-talabat': return '#FF5A00';
-      case 'bg-platform-careem': return '#4BB543';
-      case 'bg-platform-noon': return '#FEEE00';
-      case 'bg-platform-deliveroo': return '#00CCBC';
-      case 'bg-primary': return 'hsl(var(--primary))';
-      default: return 'hsl(var(--primary))';
-    }
-  };
-
   return (
     <div className="w-full">
       {label && (
@@ -61,7 +49,7 @@ export const AnimatedBar = ({
         className={cn("bg-muted/30", className)}
         style={{ 
           height: `${height}px`,
-          '--progress-background': getProgressColor()
+          '--progress-background': '#333333'
         } as React.CSSProperties}
       />
       

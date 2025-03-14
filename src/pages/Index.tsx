@@ -87,7 +87,7 @@ const Index = () => {
         )}
       >
         <div className="space-y-8">
-          {/* Menu metrics summary */}
+          {/* Menu metrics summary with colorful icons */}
           <section>
             <MenuSummary platform={selectedPlatform} />
           </section>

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { List, ChevronDown, ChevronUp, Check, X, PieChart, ArrowUpDown, DollarSign, ShoppingCart } from 'lucide-react';
+import { List, ChevronDown, ChevronUp, Check, X, ArrowUpDown, DollarSign, ShoppingCart } from 'lucide-react';
 import { Platform, mockMenuItems, platformNames } from '@/utils/mockData';
 import { cn } from '@/lib/utils';
 
@@ -140,18 +140,18 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
                       <span className="text-xs text-muted-foreground">({categorySummaries[category]?.itemCount || 0} items)</span>
                     </div>
                     <div className="flex items-center space-x-6">
-                      {/* Category summary metrics */}
+                      {/* Simplified category summary metrics */}
                       <div className="flex items-center space-x-4 text-sm">
-                        <div className={cn("flex items-center", themeColor)}>
-                          <DollarSign className="h-3.5 w-3.5 mr-1" />
+                        <div className="flex items-center text-gray-600">
+                          <span className="font-medium mr-1">AOV:</span>
                           <span>{formatCurrency(categorySummaries[category]?.avgPrice || 0)}</span>
                         </div>
-                        <div className="flex items-center">
-                          <ShoppingCart className="h-3.5 w-3.5 mr-1" />
+                        <div className="flex items-center text-gray-600">
+                          <span className="font-medium mr-1">Sold:</span>
                           <span>{categorySummaries[category]?.totalSales || 0}</span>
                         </div>
-                        <div className={cn("font-medium flex items-center", themeColor)}>
-                          <PieChart className="h-3.5 w-3.5 mr-1" />
+                        <div className={cn("font-medium", themeColor)}>
+                          <span className="mr-1">Revenue:</span>
                           <span>{formatCurrency(categorySummaries[category]?.totalRevenue || 0)}</span>
                         </div>
                       </div>
@@ -171,11 +171,9 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
                         <thead className="[&_tr]:border-b bg-muted/20">
                           <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                             <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Item</th>
-                            <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Price</th>
-                            <th className="h-10 px-4 text-right align-middle font-medium text-muted-foreground">Sales</th>
+                            <th className="h-10 px-4 text-center align-middle font-medium text-muted-foreground">Price</th>
+                            <th className="h-10 px-4 text-center align-middle font-medium text-muted-foreground">Sold</th>
                             <th className="h-10 px-4 text-right align-middle font-medium text-muted-foreground">Revenue</th>
-                            <th className="h-10 px-4 text-center align-middle font-medium text-muted-foreground">Photo</th>
-                            <th className="h-10 px-4 text-center align-middle font-medium text-muted-foreground">Description</th>
                           </tr>
                         </thead>
                         <tbody className="[&_tr:last-child]:border-0">
@@ -202,22 +200,10 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
                                   )}
                                 >
                                   <td className="p-3 align-middle">{item.name}</td>
-                                  <td className="p-3 align-middle">{formatCurrency(item.price)}</td>
-                                  <td className="p-3 align-middle text-right">{item.salesCount[platform]}</td>
+                                  <td className="p-3 align-middle text-center">{formatCurrency(item.price)}</td>
+                                  <td className="p-3 align-middle text-center">{item.salesCount[platform]}</td>
                                   <td className={cn("p-3 align-middle text-right font-medium", themeColor)}>
                                     {formatCurrency(revenue)}
-                                  </td>
-                                  <td className="p-3 align-middle text-center">
-                                    {item.hasPhoto[platform] ? 
-                                      <Check className="h-4 w-4 mx-auto text-green-500" /> : 
-                                      <X className="h-4 w-4 mx-auto text-red-500" />
-                                    }
-                                  </td>
-                                  <td className="p-3 align-middle text-center">
-                                    {item.hasDescription[platform] ? 
-                                      <Check className="h-4 w-4 mx-auto text-green-500" /> : 
-                                      <X className="h-4 w-4 mx-auto text-red-500" />
-                                    }
                                   </td>
                                 </tr>
                               );

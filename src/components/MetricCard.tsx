@@ -53,26 +53,19 @@ export const MetricCard = ({
       case 'bg-platform-careem': return 'bg-[#4BB543]';
       case 'bg-platform-noon': return 'bg-[#FEEE00]';
       case 'bg-platform-deliveroo': return 'bg-[#00CCBC]';
+      case 'bg-conversion': return 'bg-[#9b87f5]';
+      case 'bg-photos': return 'bg-[#0EA5E9]';
+      case 'bg-descriptions': return 'bg-[#F97316]';
+      case 'bg-completeness': return 'bg-[#D946EF]';
       default: return 'bg-primary';
     }
   };
   
   // Determine icon text color
   const getIconTextColor = () => {
-    // For noon (yellow), use dark text for better contrast
-    if (barColor === 'bg-platform-noon') return 'text-gray-800';
+    // For noon (yellow) and other light colors, use dark text for better contrast
+    if (barColor === 'bg-platform-noon' || barColor === 'bg-photos') return 'text-gray-800';
     return 'text-white';
-  };
-
-  // Get progress bar color
-  const getProgressColor = () => {
-    switch(barColor) {
-      case 'bg-platform-talabat': return 'bg-[#FF5A00]';
-      case 'bg-platform-careem': return 'bg-[#4BB543]';
-      case 'bg-platform-noon': return 'bg-[#FEEE00]';
-      case 'bg-platform-deliveroo': return 'bg-[#00CCBC]';
-      default: return 'bg-primary';
-    }
   };
 
   return (
@@ -123,7 +116,7 @@ export const MetricCard = ({
                   value={progressValue} 
                   className="h-1.5 bg-muted"
                   style={{ 
-                    '--progress-background': getProgressColor()
+                    '--progress-background': '#333333'
                   } as React.CSSProperties}
                 />
               </div>
