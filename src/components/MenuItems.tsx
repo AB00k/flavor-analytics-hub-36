@@ -140,17 +140,17 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
                       <span className="text-xs text-muted-foreground">({categorySummaries[category]?.itemCount || 0} items)</span>
                     </div>
                     <div className="flex items-center space-x-6">
-                      {/* Simplified category summary metrics */}
+                      {/* Colorful category summary metrics */}
                       <div className="flex items-center space-x-4 text-sm">
-                        <div className="flex items-center text-gray-600">
-                          <span className="font-medium mr-1">AOV:</span>
+                        <div className="flex items-center text-[#0EA5E9] font-medium">
+                          <span className="mr-1">AOV:</span>
                           <span>{formatCurrency(categorySummaries[category]?.avgPrice || 0)}</span>
                         </div>
-                        <div className="flex items-center text-gray-600">
-                          <span className="font-medium mr-1">Sold:</span>
+                        <div className="flex items-center text-[#F97316] font-medium">
+                          <span className="mr-1">Sold:</span>
                           <span>{categorySummaries[category]?.totalSales || 0}</span>
                         </div>
-                        <div className={cn("font-medium", themeColor)}>
+                        <div className={cn("font-medium text-[#9b87f5]")}>
                           <span className="mr-1">Revenue:</span>
                           <span>{formatCurrency(categorySummaries[category]?.totalRevenue || 0)}</span>
                         </div>

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin } from 'lucide-react';
 import { Platform, mockAreaSales, getItemNameById, platformLightColors } from '@/utils/mockData';
 import { cn } from '@/lib/utils';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface MenuGeographyProps {
   platform: Platform;
@@ -12,9 +13,19 @@ interface MenuGeographyProps {
 
 export const MenuGeography = ({ platform, className }: MenuGeographyProps) => {
   const [loaded, setLoaded] = useState(false);
+  const [selectedAreas, setSelectedAreas] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     setLoaded(false);
+    
+    // Initialize all areas as selected
+    const initialAreaState = mockAreaSales.reduce((acc, area) => {
+      acc[area.area] = true;
+      return acc;
+    }, {} as Record<string, boolean>);
+    
+    setSelectedAreas(initialAreaState);
+    
     setTimeout(() => {
       setLoaded(true);
     }, 400);
@@ -62,6 +73,16 @@ export const MenuGeography = ({ platform, className }: MenuGeographyProps) => {
     }
   };
 
+  const handleAreaToggle = (area: string) => {
+    setSelectedAreas(prev => ({
+      ...prev,
+      [area]: !prev[area]
+    }));
+  };
+
+  // Filter areas based on selection
+  const filteredAreas = mockAreaSales.filter(area => selectedAreas[area.area]);
+
   return (
     <Card className={cn(
       "h-full shadow-sm bg-gradient-to-br from-white to-background", 
@@ -78,8 +99,27 @@ export const MenuGeography = ({ platform, className }: MenuGeographyProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
+        {/* Area selection */}
+        <div className="mb-4 flex flex-wrap gap-3 bg-muted/20 p-3 rounded-md">
+          {mockAreaSales.map((area) => (
+            <div key={area.area} className="flex items-center space-x-2">
+              <Checkbox 
+                id={`area-${area.area}`}
+                checked={selectedAreas[area.area]}
+                onCheckedChange={() => handleAreaToggle(area.area)}
+              />
+              <label 
+                htmlFor={`area-${area.area}`}
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                {area.area}
+              </label>
+            </div>
+          ))}
+        </div>
+        
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {mockAreaSales.map((area, areaIndex) => {
+          {filteredAreas.map((area, areaIndex) => {
             return (
               <div 
                 key={area.area}

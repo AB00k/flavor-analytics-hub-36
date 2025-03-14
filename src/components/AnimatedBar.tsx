@@ -37,12 +37,10 @@ export const AnimatedBar = ({
 
   return (
     <div className="w-full">
-      {label && (
-        <div className="flex justify-between text-sm mb-1">
-          <span className="text-muted-foreground">{label}</span>
-          {showValue && <span className="font-medium">{value}%</span>}
-        </div>
-      )}
+      <div className="flex justify-between items-center mb-1">
+        {label && <span className="text-sm text-muted-foreground">{label}</span>}
+        {showValue && <span className="text-sm font-medium">{value}%</span>}
+      </div>
       
       <Progress 
         value={progressValue} 
@@ -52,12 +50,6 @@ export const AnimatedBar = ({
           '--progress-background': '#333333'
         } as React.CSSProperties}
       />
-      
-      {!label && showValue && (
-        <div className="mt-1 text-xs text-right text-muted-foreground">
-          {value}%
-        </div>
-      )}
     </div>
   );
 };
