@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { List, ChevronDown, ChevronUp, Check, X, ArrowUpDown, DollarSign, ShoppingCart } from 'lucide-react';
+import { List, ChevronDown, ChevronUp, ShoppingCart, DollarSign } from 'lucide-react';
 import { Platform, mockMenuItems, platformNames } from '@/utils/mockData';
 import { cn } from '@/lib/utils';
 
@@ -13,7 +13,6 @@ interface MenuItemsProps {
 }
 
 interface CategorySummary {
-  avgPrice: number;
   totalSales: number;
   totalRevenue: number;
   itemCount: number;
@@ -50,14 +49,12 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
       );
       
       if (categoryItems.length > 0) {
-        const totalPrice = categoryItems.reduce((sum, item) => sum + item.price, 0);
         const totalSales = categoryItems.reduce((sum, item) => sum + item.salesCount[platform], 0);
         const totalRevenue = categoryItems.reduce(
           (sum, item) => sum + (item.price * item.salesCount[platform]), 0
         );
         
         summaries[category] = {
-          avgPrice: totalPrice / categoryItems.length,
           totalSales: totalSales,
           totalRevenue: totalRevenue,
           itemCount: categoryItems.length
@@ -87,14 +84,14 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
     }).format(value);
   };
 
-  const themeColor = platform !== 'all' ? `text-platform-${platform}` : 'text-primary';
-  const buttonBg = platform !== 'all' ? `bg-platform-${platform} hover:bg-platform-${platform}/90` : 'bg-primary hover:bg-primary/90';
+  const themeColor = platform !== 'all' ? `text-platform-${platform}` : 'text-purple-600';
+  const buttonBg = platform !== 'all' ? `bg-platform-${platform} hover:bg-platform-${platform}/90` : 'bg-purple-600 hover:bg-purple-700';
   const headerGradient = platform !== 'all' 
     ? `bg-gradient-to-r from-platform-${platform}/20 to-transparent` 
-    : 'bg-gradient-to-r from-primary/10 to-transparent';
+    : 'bg-gradient-to-r from-purple-200 to-transparent';
 
   return (
-    <Card className={cn("shadow-sm overflow-hidden border-t-4", platform !== 'all' ? `border-t-platform-${platform}` : 'border-t-primary', className)}>
+    <Card className={cn("shadow-sm overflow-hidden border-t-4", platform !== 'all' ? `border-t-platform-${platform}` : 'border-t-purple-500', className)}>
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CardHeader className={cn("pb-3 flex flex-row items-center justify-between", headerGradient)}>
           <CardTitle className="text-xl flex items-center">
@@ -140,18 +137,15 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
                       <span className="text-xs text-muted-foreground">({categorySummaries[category]?.itemCount || 0} items)</span>
                     </div>
                     <div className="flex items-center space-x-6">
-                      {/* Colorful category summary metrics */}
-                      <div className="flex items-center space-x-4 text-sm">
-                        <div className="flex items-center text-[#0EA5E9] font-medium">
-                          <span className="mr-1">AOV:</span>
-                          <span>{formatCurrency(categorySummaries[category]?.avgPrice || 0)}</span>
-                        </div>
-                        <div className="flex items-center text-[#F97316] font-medium">
-                          <span className="mr-1">Sold:</span>
+                      {/* Simplified category summary metrics in purple */}
+                      <div className="flex items-center space-x-6 text-sm">
+                        <div className="flex items-center text-purple-600 font-medium">
+                          <ShoppingCart className="h-4 w-4 mr-1.5" />
                           <span>{categorySummaries[category]?.totalSales || 0}</span>
+                          <span className="ml-1 text-xs text-muted-foreground">sold</span>
                         </div>
-                        <div className={cn("font-medium text-[#9b87f5]")}>
-                          <span className="mr-1">Revenue:</span>
+                        <div className="flex items-center text-purple-600 font-medium">
+                          <DollarSign className="h-4 w-4 mr-1.5" />
                           <span>{formatCurrency(categorySummaries[category]?.totalRevenue || 0)}</span>
                         </div>
                       </div>
