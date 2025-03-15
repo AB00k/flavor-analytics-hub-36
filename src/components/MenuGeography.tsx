@@ -41,7 +41,7 @@ export const MenuGeography = ({ platform, className }: MenuGeographyProps) => {
       case 'careem': return 'from-platform-careem/20 to-platform-careem/5';
       case 'noon': return 'from-platform-noon/20 to-platform-noon/5';
       case 'deliveroo': return 'from-platform-deliveroo/20 to-platform-deliveroo/5';
-      default: return 'from-purple-200/50 to-purple-100/30'; // Light purple for "all" platform
+      default: return 'from-gray-200/50 to-gray-100/30'; // Black tones for "all" platform
     }
   };
 
@@ -51,14 +51,14 @@ export const MenuGeography = ({ platform, className }: MenuGeographyProps) => {
       case 'careem': return 'border-platform-careem';
       case 'noon': return 'border-platform-noon';
       case 'deliveroo': return 'border-platform-deliveroo';
-      default: return 'border-purple-400'; // Light purple border for "all" platform
+      default: return 'border-gray-400'; // Black tone border for "all" platform
     }
   };
 
   const getItemBgColor = (itemIndex: number) => {
     if (platform === 'all') {
-      // Light purple backgrounds for "all" platform
-      return 'bg-purple-100/50 border-l-2 border-purple-400';
+      // Black tone backgrounds for "all" platform
+      return 'bg-gray-100/50 border-l-2 border-gray-400';
     }
 
     // Platform-specific styling
@@ -88,14 +88,14 @@ export const MenuGeography = ({ platform, className }: MenuGeographyProps) => {
   return (
     <Card className={cn(
       "h-full shadow-sm bg-gradient-to-br from-white to-background", 
-      platform !== 'all' ? `border-t-4 ${getPlatformBorderColor()}` : 'border-t-4 border-t-purple-400 bg-gradient-to-br from-purple-100/30 to-white', 
+      platform !== 'all' ? `border-t-4 ${getPlatformBorderColor()}` : 'border-t-4 border-t-gray-500 bg-gradient-to-br from-gray-100/30 to-white', 
       className
     )}>
       <CardHeader className="pb-3">
         <CardTitle className="text-xl flex items-center">
           <MapPin className={cn(
             "h-5 w-5 mr-2",
-            platform !== 'all' ? `text-platform-${platform}` : 'text-purple-500'
+            platform !== 'all' ? `text-platform-${platform}` : 'text-gray-600'
           )} />
           Menu Geography Trends
         </CardTitle>
@@ -110,7 +110,7 @@ export const MenuGeography = ({ platform, className }: MenuGeographyProps) => {
                 size="sm" 
                 className={cn(
                   "flex items-center gap-2 text-sm",
-                  platform !== 'all' ? `border-platform-${platform}/30 text-platform-${platform}` : 'border-purple-300 text-purple-600'
+                  platform !== 'all' ? `border-platform-${platform}/30 text-platform-${platform}` : 'border-gray-300 text-gray-600'
                 )}
               >
                 Selected Areas ({getSelectedAreaCount()})
@@ -190,7 +190,7 @@ export const MenuGeography = ({ platform, className }: MenuGeographyProps) => {
                       <span>{getItemNameById(item.itemId)}</span>
                       <span className={cn(
                         "font-medium px-2 py-0.5 rounded-full text-xs",
-                        platform !== 'all' ? `bg-platform-${platform}/20 text-platform-${platform}` : 'bg-purple-100 text-purple-700'
+                        platform !== 'all' ? `bg-platform-${platform}/20 text-platform-${platform}` : 'bg-gray-200 text-gray-700'
                       )}>
                         {item.salesCount} sold
                       </span>
