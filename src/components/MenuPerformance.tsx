@@ -44,10 +44,10 @@ export const MenuPerformance = ({ platform, className }: MenuPerformanceProps) =
   const themeColor = platform !== 'all' ? `text-platform-${platform}` : 'text-gray-700';
 
   return (
-    <Card className={cn("h-full shadow-sm overflow-hidden", className)}>
-      <CardHeader className="pb-3">
+    <Card className={cn("h-full shadow-sm overflow-hidden bg-white", className)}>
+      <CardHeader className="pb-3 bg-[#f9fafb]">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-xl">Menu Performance</CardTitle>
+          <CardTitle className="text-xl text-gray-800">Menu Performance</CardTitle>
           <Tabs defaultValue="top" className="w-auto" onValueChange={setActiveTab}>
             <TabsList className="grid grid-cols-2 w-[240px]">
               <TabsTrigger value="top" className="flex items-center justify-center space-x-1">
@@ -60,25 +60,25 @@ export const MenuPerformance = ({ platform, className }: MenuPerformanceProps) =
           </Tabs>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0">
         <Tabs value={activeTab} className="w-full">
-          <TabsContent value="top" className="m-0 mt-2">
-            <div className="rounded-md border overflow-hidden">
+          <TabsContent value="top" className="m-0">
+            <div className="overflow-hidden">
               <table className="w-full caption-bottom text-sm">
-                <thead className="[&_tr]:border-b">
-                  <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Item</th>
-                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Sales</th>
-                    <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Revenue</th>
-                    <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Profit</th>
+                <thead className="bg-[#f9fafb] border-y border-gray-200">
+                  <tr>
+                    <th className="h-11 px-6 text-left align-middle font-medium text-gray-500">Item</th>
+                    <th className="h-11 px-6 text-left align-middle font-medium text-gray-500">Sales</th>
+                    <th className="h-11 px-6 text-right align-middle font-medium text-gray-500">Revenue</th>
+                    <th className="h-11 px-6 text-right align-middle font-medium text-gray-500">Profit</th>
                   </tr>
                 </thead>
-                <tbody className="[&_tr:last-child]:border-0">
+                <tbody>
                   {topItems.map((item, index) => (
                     <tr 
                       key={item.id}
                       className={cn(
-                        "border-b transition-colors hover:bg-muted/50",
+                        "border-b border-gray-100 hover:bg-gray-50",
                         !loaded && "opacity-0 translate-y-4",
                         loaded && "opacity-100 translate-y-0",
                         "transition-all duration-300 ease-out",
@@ -91,11 +91,11 @@ export const MenuPerformance = ({ platform, className }: MenuPerformanceProps) =
                         }
                       )}
                     >
-                      <td className="p-4 align-middle">{item.name}</td>
-                      <td className="p-4 align-middle">{item.salesCount[platform]}</td>
-                      <td className="p-4 align-middle text-right">{formatCurrency(item.revenue)}</td>
-                      <td className={cn("p-4 align-middle text-right font-medium", themeColor)}>
-                        {formatCurrency(item.profit)}
+                      <td className="px-6 py-4 align-middle font-medium text-gray-700">{item.name}</td>
+                      <td className="px-6 py-4 align-middle text-gray-700">{item.salesCount[platform]}</td>
+                      <td className="px-6 py-4 align-middle text-right text-gray-700">AED {formatCurrency(item.revenue)}</td>
+                      <td className={cn("px-6 py-4 align-middle text-right font-medium", themeColor)}>
+                        AED {formatCurrency(item.profit)}
                       </td>
                     </tr>
                   ))}
@@ -103,23 +103,23 @@ export const MenuPerformance = ({ platform, className }: MenuPerformanceProps) =
               </table>
             </div>
           </TabsContent>
-          <TabsContent value="bottom" className="m-0 mt-2">
-            <div className="rounded-md border overflow-hidden">
+          <TabsContent value="bottom" className="m-0">
+            <div className="overflow-hidden">
               <table className="w-full caption-bottom text-sm">
-                <thead className="[&_tr]:border-b">
-                  <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Item</th>
-                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Sales</th>
-                    <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Revenue</th>
-                    <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Profit</th>
+                <thead className="bg-[#f9fafb] border-y border-gray-200">
+                  <tr>
+                    <th className="h-11 px-6 text-left align-middle font-medium text-gray-500">Item</th>
+                    <th className="h-11 px-6 text-left align-middle font-medium text-gray-500">Sales</th>
+                    <th className="h-11 px-6 text-right align-middle font-medium text-gray-500">Revenue</th>
+                    <th className="h-11 px-6 text-right align-middle font-medium text-gray-500">Profit</th>
                   </tr>
                 </thead>
-                <tbody className="[&_tr:last-child]:border-0">
+                <tbody>
                   {bottomItems.map((item, index) => (
                     <tr 
                       key={item.id}
                       className={cn(
-                        "border-b transition-colors hover:bg-muted/50",
+                        "border-b border-gray-100 hover:bg-gray-50",
                         !loaded && "opacity-0 translate-y-4",
                         loaded && "opacity-100 translate-y-0",
                         "transition-all duration-300 ease-out",
@@ -132,11 +132,11 @@ export const MenuPerformance = ({ platform, className }: MenuPerformanceProps) =
                         }
                       )}
                     >
-                      <td className="p-4 align-middle">{item.name}</td>
-                      <td className="p-4 align-middle">{item.salesCount[platform]}</td>
-                      <td className="p-4 align-middle text-right">{formatCurrency(item.revenue)}</td>
-                      <td className={cn("p-4 align-middle text-right font-medium", themeColor)}>
-                        {formatCurrency(item.profit)}
+                      <td className="px-6 py-4 align-middle font-medium text-gray-700">{item.name}</td>
+                      <td className="px-6 py-4 align-middle text-gray-700">{item.salesCount[platform]}</td>
+                      <td className="px-6 py-4 align-middle text-right text-gray-700">AED {formatCurrency(item.revenue)}</td>
+                      <td className={cn("px-6 py-4 align-middle text-right font-medium", themeColor)}>
+                        AED {formatCurrency(item.profit)}
                       </td>
                     </tr>
                   ))}
