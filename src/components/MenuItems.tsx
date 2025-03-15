@@ -81,6 +81,7 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
       style: 'currency',
       currency: 'AED',
       minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
       currencyDisplay: 'code' // Remove the $ sign
     }).format(value).replace('AED', '').trim();
   };
@@ -92,9 +93,9 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
     : 'bg-gradient-to-r from-gray-200 to-transparent';
 
   return (
-    <Card className={cn("shadow-sm overflow-hidden border-t-4 bg-white", platform !== 'all' ? `border-t-platform-${platform}` : 'border-t-gray-500', className)}>
+    <Card className={cn("shadow-none border border-gray-200 rounded-lg overflow-hidden bg-white", platform !== 'all' ? `border-t-4 border-t-platform-${platform}` : 'border-t-4 border-t-gray-500', className)}>
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <CardHeader className={cn("pb-3 flex flex-row items-center justify-between", "bg-[#f9fafb]")}>
+        <CardHeader className={cn("pb-3 flex flex-row items-center justify-between", "bg-white border-b border-gray-200")}>
           <CardTitle className="text-xl flex items-center text-gray-800">
             <List className="h-5 w-5 mr-2" />
             Complete Menu Analysis
@@ -113,7 +114,7 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
                 <div 
                   key={category}
                   className={cn(
-                    "border-b last:border-b-0 border-gray-100",
+                    "border-b last:border-b-0 border-gray-200",
                     !loaded && "opacity-0 translate-y-4",
                     loaded && "opacity-100 translate-y-0",
                     "transition-all duration-300 ease-out",
@@ -129,7 +130,7 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
                   <div 
                     className={cn(
                       "flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 transition-colors",
-                      categoryExpanded[category] ? "bg-[#f9fafb]" : "bg-white"
+                      categoryExpanded[category] ? "bg-gray-50" : "bg-white"
                     )}
                     onClick={() => toggleCategory(category)}
                   >
@@ -163,12 +164,12 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
                   {categoryExpanded[category] && (
                     <div className="overflow-x-auto">
                       <table className="w-full caption-bottom text-sm">
-                        <thead className="bg-[#f9fafb] border-y border-gray-200">
+                        <thead className="bg-gray-50 border-y border-gray-200">
                           <tr>
-                            <th className="h-11 px-6 text-left align-middle font-medium text-gray-500">Item</th>
-                            <th className="h-11 px-6 text-center align-middle font-medium text-gray-500">Price</th>
-                            <th className="h-11 px-6 text-center align-middle font-medium text-gray-500">Sold</th>
-                            <th className="h-11 px-6 text-right align-middle font-medium text-gray-500">Revenue</th>
+                            <th className="h-11 px-6 text-left align-middle font-medium text-gray-600">Item</th>
+                            <th className="h-11 px-6 text-center align-middle font-medium text-gray-600">Price</th>
+                            <th className="h-11 px-6 text-center align-middle font-medium text-gray-600">Sold</th>
+                            <th className="h-11 px-6 text-right align-middle font-medium text-gray-600">Revenue</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -181,11 +182,11 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
                                 <tr 
                                   key={item.id}
                                   className={cn(
-                                    "border-b border-gray-100 hover:bg-gray-50",
+                                    "border-b border-gray-200 hover:bg-gray-50",
                                     !categoryExpanded[category] && "opacity-0 h-0",
                                     categoryExpanded[category] && "opacity-100",
                                     "transition-all duration-300 ease-out",
-                                    index % 2 === 0 ? "bg-white" : "bg-[#f9fafb]/30",
+                                    index % 2 === 0 ? "bg-white" : "bg-gray-50/30",
                                     {
                                       "delay-[0ms]": index === 0,
                                       "delay-[50ms]": index === 1,
@@ -194,7 +195,7 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
                                     }
                                   )}
                                 >
-                                  <td className="px-6 py-4 align-middle font-medium text-gray-700">{item.name}</td>
+                                  <td className="px-6 py-4 align-middle font-medium text-gray-800">{item.name}</td>
                                   <td className="px-6 py-4 align-middle text-center text-gray-700">AED {formatCurrency(item.price)}</td>
                                   <td className="px-6 py-4 align-middle text-center text-gray-700">{item.salesCount[platform]}</td>
                                   <td className={cn("px-6 py-4 align-middle text-right font-medium", themeColor)}>

@@ -37,6 +37,7 @@ export const MenuPerformance = ({ platform, className }: MenuPerformanceProps) =
       style: 'currency',
       currency: 'AED',
       minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
       currencyDisplay: 'code' // Remove the $ sign
     }).format(value).replace('AED', '').trim();
   };
@@ -44,16 +45,16 @@ export const MenuPerformance = ({ platform, className }: MenuPerformanceProps) =
   const themeColor = platform !== 'all' ? `text-platform-${platform}` : 'text-gray-700';
 
   return (
-    <Card className={cn("h-full shadow-sm overflow-hidden bg-white", className)}>
-      <CardHeader className="pb-3 bg-[#f9fafb]">
+    <Card className={cn("h-full shadow-none border border-gray-200 rounded-lg overflow-hidden bg-white", className)}>
+      <CardHeader className="pb-3 bg-white border-b border-gray-200">
         <div className="flex justify-between items-center">
           <CardTitle className="text-xl text-gray-800">Menu Performance</CardTitle>
           <Tabs defaultValue="top" className="w-auto" onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-2 w-[240px]">
-              <TabsTrigger value="top" className="flex items-center justify-center space-x-1">
+            <TabsList className="grid grid-cols-2 w-[240px] bg-gray-100">
+              <TabsTrigger value="top" className="flex items-center justify-center space-x-1 data-[state=active]:bg-white">
                 <TrendingUp className="h-4 w-4 mr-1" /> <span>Top Items</span>
               </TabsTrigger>
-              <TabsTrigger value="bottom" className="flex items-center justify-center space-x-1">
+              <TabsTrigger value="bottom" className="flex items-center justify-center space-x-1 data-[state=active]:bg-white">
                 <TrendingDown className="h-4 w-4 mr-1" /> <span>Bottom Items</span>
               </TabsTrigger>
             </TabsList>
@@ -65,12 +66,12 @@ export const MenuPerformance = ({ platform, className }: MenuPerformanceProps) =
           <TabsContent value="top" className="m-0">
             <div className="overflow-hidden">
               <table className="w-full caption-bottom text-sm">
-                <thead className="bg-[#f9fafb] border-y border-gray-200">
+                <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="h-11 px-6 text-left align-middle font-medium text-gray-500">Item</th>
-                    <th className="h-11 px-6 text-left align-middle font-medium text-gray-500">Sales</th>
-                    <th className="h-11 px-6 text-right align-middle font-medium text-gray-500">Revenue</th>
-                    <th className="h-11 px-6 text-right align-middle font-medium text-gray-500">Profit</th>
+                    <th className="h-11 px-6 text-left align-middle font-medium text-gray-600">Item</th>
+                    <th className="h-11 px-6 text-left align-middle font-medium text-gray-600">Sales</th>
+                    <th className="h-11 px-6 text-right align-middle font-medium text-gray-600">Revenue</th>
+                    <th className="h-11 px-6 text-right align-middle font-medium text-gray-600">Profit</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -78,7 +79,7 @@ export const MenuPerformance = ({ platform, className }: MenuPerformanceProps) =
                     <tr 
                       key={item.id}
                       className={cn(
-                        "border-b border-gray-100 hover:bg-gray-50",
+                        "border-b border-gray-200 hover:bg-gray-50",
                         !loaded && "opacity-0 translate-y-4",
                         loaded && "opacity-100 translate-y-0",
                         "transition-all duration-300 ease-out",
@@ -91,7 +92,7 @@ export const MenuPerformance = ({ platform, className }: MenuPerformanceProps) =
                         }
                       )}
                     >
-                      <td className="px-6 py-4 align-middle font-medium text-gray-700">{item.name}</td>
+                      <td className="px-6 py-4 align-middle font-medium text-gray-800">{item.name}</td>
                       <td className="px-6 py-4 align-middle text-gray-700">{item.salesCount[platform]}</td>
                       <td className="px-6 py-4 align-middle text-right text-gray-700">AED {formatCurrency(item.revenue)}</td>
                       <td className={cn("px-6 py-4 align-middle text-right font-medium", themeColor)}>
@@ -106,12 +107,12 @@ export const MenuPerformance = ({ platform, className }: MenuPerformanceProps) =
           <TabsContent value="bottom" className="m-0">
             <div className="overflow-hidden">
               <table className="w-full caption-bottom text-sm">
-                <thead className="bg-[#f9fafb] border-y border-gray-200">
+                <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="h-11 px-6 text-left align-middle font-medium text-gray-500">Item</th>
-                    <th className="h-11 px-6 text-left align-middle font-medium text-gray-500">Sales</th>
-                    <th className="h-11 px-6 text-right align-middle font-medium text-gray-500">Revenue</th>
-                    <th className="h-11 px-6 text-right align-middle font-medium text-gray-500">Profit</th>
+                    <th className="h-11 px-6 text-left align-middle font-medium text-gray-600">Item</th>
+                    <th className="h-11 px-6 text-left align-middle font-medium text-gray-600">Sales</th>
+                    <th className="h-11 px-6 text-right align-middle font-medium text-gray-600">Revenue</th>
+                    <th className="h-11 px-6 text-right align-middle font-medium text-gray-600">Profit</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -119,7 +120,7 @@ export const MenuPerformance = ({ platform, className }: MenuPerformanceProps) =
                     <tr 
                       key={item.id}
                       className={cn(
-                        "border-b border-gray-100 hover:bg-gray-50",
+                        "border-b border-gray-200 hover:bg-gray-50",
                         !loaded && "opacity-0 translate-y-4",
                         loaded && "opacity-100 translate-y-0",
                         "transition-all duration-300 ease-out",
@@ -132,7 +133,7 @@ export const MenuPerformance = ({ platform, className }: MenuPerformanceProps) =
                         }
                       )}
                     >
-                      <td className="px-6 py-4 align-middle font-medium text-gray-700">{item.name}</td>
+                      <td className="px-6 py-4 align-middle font-medium text-gray-800">{item.name}</td>
                       <td className="px-6 py-4 align-middle text-gray-700">{item.salesCount[platform]}</td>
                       <td className="px-6 py-4 align-middle text-right text-gray-700">AED {formatCurrency(item.revenue)}</td>
                       <td className={cn("px-6 py-4 align-middle text-right font-medium", themeColor)}>
