@@ -80,18 +80,19 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'AED',
-      minimumFractionDigits: 0
-    }).format(value);
+      minimumFractionDigits: 0,
+      currencyDisplay: 'code' // Remove the $ sign
+    }).format(value).replace('AED', '').trim();
   };
 
-  const themeColor = platform !== 'all' ? `text-platform-${platform}` : 'text-purple-600';
-  const buttonBg = platform !== 'all' ? `bg-platform-${platform} hover:bg-platform-${platform}/90` : 'bg-purple-600 hover:bg-purple-700';
+  const themeColor = platform !== 'all' ? `text-platform-${platform}` : 'text-gray-700';
+  const buttonBg = platform !== 'all' ? `bg-platform-${platform} hover:bg-platform-${platform}/90` : 'bg-gray-700 hover:bg-gray-800';
   const headerGradient = platform !== 'all' 
     ? `bg-gradient-to-r from-platform-${platform}/20 to-transparent` 
-    : 'bg-gradient-to-r from-purple-200 to-transparent';
+    : 'bg-gradient-to-r from-gray-200 to-transparent';
 
   return (
-    <Card className={cn("shadow-sm overflow-hidden border-t-4", platform !== 'all' ? `border-t-platform-${platform}` : 'border-t-purple-500', className)}>
+    <Card className={cn("shadow-sm overflow-hidden border-t-4", platform !== 'all' ? `border-t-platform-${platform}` : 'border-t-gray-500', className)}>
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CardHeader className={cn("pb-3 flex flex-row items-center justify-between", headerGradient)}>
           <CardTitle className="text-xl flex items-center">
@@ -137,14 +138,14 @@ export const MenuItems = ({ platform, className }: MenuItemsProps) => {
                       <span className="text-xs text-muted-foreground">({categorySummaries[category]?.itemCount || 0} items)</span>
                     </div>
                     <div className="flex items-center space-x-6">
-                      {/* Simplified category summary metrics in purple */}
+                      {/* Category summary metrics in black/gray */}
                       <div className="flex items-center space-x-6 text-sm">
-                        <div className="flex items-center text-purple-600 font-medium">
+                        <div className="flex items-center text-gray-700 font-medium">
                           <ShoppingCart className="h-4 w-4 mr-1.5" />
                           <span>{categorySummaries[category]?.totalSales || 0}</span>
                           <span className="ml-1 text-xs text-muted-foreground">sold</span>
                         </div>
-                        <div className="flex items-center text-purple-600 font-medium">
+                        <div className="flex items-center text-gray-700 font-medium">
                           <DollarSign className="h-4 w-4 mr-1.5" />
                           <span>{formatCurrency(categorySummaries[category]?.totalRevenue || 0)}</span>
                         </div>

@@ -53,10 +53,10 @@ export const MetricCard = ({
       case 'bg-platform-careem': return 'bg-[#4BB543]';
       case 'bg-platform-noon': return 'bg-[#FEEE00]';
       case 'bg-platform-deliveroo': return 'bg-[#00CCBC]';
-      case 'bg-conversion': return 'bg-[#9b87f5]';
-      case 'bg-photos': return 'bg-[#0EA5E9]';
-      case 'bg-descriptions': return 'bg-[#F97316]';
-      case 'bg-completeness': return 'bg-[#D946EF]';
+      case 'bg-blue-500': return 'bg-[#2B7CD3]'; // Blue funnel icon
+      case 'bg-red-500': return 'bg-[#E53E3E]';  // Red food icon
+      case 'bg-purple-600': return 'bg-[#9333EA]'; // Purple menu icon
+      case 'bg-green-500': return 'bg-[#4BB543]'; // Green menu icon
       default: return 'bg-primary';
     }
   };

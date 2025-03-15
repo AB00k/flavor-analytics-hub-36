@@ -34,8 +34,6 @@ export const MenuSummary = ({ platform, className }: MenuSummaryProps) => {
       }, 100);
     });
   }, [platform]);
-
-  const barColor = platform !== 'all' ? `bg-platform-${platform}` : 'bg-primary';
   
   return (
     <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4", className)}>
@@ -44,7 +42,7 @@ export const MenuSummary = ({ platform, className }: MenuSummaryProps) => {
         value={metrics.conversionRate}
         icon={<BarChart className="h-5 w-5" />}
         showBar={true}
-        barColor={barColor}
+        barColor="bg-blue-500" // Blue for conversion rate (like the funnel icon)
         isPercentage={true}
         index={0}
       />
@@ -54,7 +52,7 @@ export const MenuSummary = ({ platform, className }: MenuSummaryProps) => {
         value={metrics.photoPercentage}
         icon={<Image className="h-5 w-5" />}
         showBar={true}
-        barColor={barColor}
+        barColor="bg-red-500" // Red for photos (like the red icon in the image)
         isPercentage={true}
         index={1}
       />
@@ -64,7 +62,7 @@ export const MenuSummary = ({ platform, className }: MenuSummaryProps) => {
         value={metrics.descriptionPercentage}
         icon={<FileText className="h-5 w-5" />}
         showBar={true}
-        barColor={barColor}
+        barColor="bg-purple-600" // Purple for descriptions (like the purple icon)
         isPercentage={true}
         index={2}
       />
@@ -74,7 +72,7 @@ export const MenuSummary = ({ platform, className }: MenuSummaryProps) => {
         value={metrics.completenessPercentage}
         icon={<CheckCircle className="h-5 w-5" />}
         showBar={true}
-        barColor={barColor}
+        barColor="bg-green-500" // Green for completeness (like the green icon)
         isPercentage={true}
         index={3}
       />

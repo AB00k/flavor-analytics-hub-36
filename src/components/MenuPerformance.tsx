@@ -36,11 +36,12 @@ export const MenuPerformance = ({ platform, className }: MenuPerformanceProps) =
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'AED',
-      minimumFractionDigits: 0
-    }).format(value);
+      minimumFractionDigits: 0,
+      currencyDisplay: 'code' // Remove the $ sign
+    }).format(value).replace('AED', '').trim();
   };
 
-  const themeColor = platform !== 'all' ? `text-platform-${platform}` : 'text-primary';
+  const themeColor = platform !== 'all' ? `text-platform-${platform}` : 'text-gray-700';
 
   return (
     <Card className={cn("h-full shadow-sm overflow-hidden", className)}>

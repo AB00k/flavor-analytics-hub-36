@@ -92,12 +92,12 @@ const Index = () => {
             <MenuSummary platform={selectedPlatform} />
           </section>
           
-          {/* Menu performance */}
+          {/* Menu performance and geography with adjusted sizing */}
           <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-1">
               <MenuPerformance platform={selectedPlatform} />
             </div>
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-2">
               <MenuGeography platform={selectedPlatform} />
             </div>
           </section>
