@@ -50,12 +50,18 @@ const CustomerCohort = ({ selectedPlatform }: CustomerCohortProps) => {
     const cohorts = Object.entries(cohortGroups)
       .map(([date, customers]) => {
         // Calculate retention rates by weeks (simulation)
-        const weeksCount = 16; // Display up to 16 weeks retention
-        const retentionRates = Array.from({ length: weeksCount }, (_, i) => {
+        const weeksCount = 6; // Display up to 6 weeks retention
+        
+        // Calculate decreasing number of retention data points based on date
+        // More recent cohorts will have fewer data points
+        const monthsAgo = getMonthsAgo(date);
+        const availableDataPoints = Math.min(weeksCount, Math.max(1, 6 - monthsAgo));
+        
+        const retentionRates = Array.from({ length: availableDataPoints }, (_, i) => {
           // Simulate decreasing retention rates over time
-          const baseRate = Math.max(0.08, 0.8 - (i * 0.04));
+          const baseRate = Math.max(0.1, 0.85 - (i * 0.12));
           // Add some randomness
-          const randomFactor = Math.random() * 0.2 - 0.1; // -0.1 to 0.1
+          const randomFactor = Math.random() * 0.1 - 0.05; // -0.05 to 0.05
           const rate = Math.max(0.05, Math.min(0.9, baseRate + randomFactor));
           
           return {
@@ -76,26 +82,36 @@ const CustomerCohort = ({ selectedPlatform }: CustomerCohortProps) => {
         };
       })
       .sort((a, b) => a.cohortDate.localeCompare(b.cohortDate))
-      .slice(-12); // Only show the last 12 cohorts
+      .slice(-6); // Only show the last 6 cohorts
     
     return cohorts;
+  };
+  
+  // Helper function to calculate months ago
+  const getMonthsAgo = (dateStr: string): number => {
+    const [year, month] = dateStr.split('-').map(n => parseInt(n));
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+    
+    return (currentYear - year) * 12 + (currentMonth - month);
   };
 
   // Function to determine color based on retention rate
   const getRetentionColor = (rate: number): string => {
-    if (rate >= 25) return 'bg-emerald-600 text-white';
-    if (rate >= 20) return 'bg-emerald-500 text-white';
-    if (rate >= 17) return 'bg-green-500 text-white';
-    if (rate >= 15) return 'bg-lime-500 text-white';
-    if (rate >= 12) return 'bg-yellow-400 text-white';
-    if (rate >= 10) return 'bg-yellow-500 text-white';
-    if (rate >= 8) return 'bg-amber-500 text-white';
-    return 'bg-red-600 text-white';
+    if (rate >= 80) return 'bg-emerald-600 text-white';
+    if (rate >= 70) return 'bg-emerald-500 text-white';
+    if (rate >= 60) return 'bg-green-500 text-white';
+    if (rate >= 50) return 'bg-lime-500 text-white';
+    if (rate >= 40) return 'bg-yellow-400 text-white';
+    if (rate >= 30) return 'bg-yellow-500 text-white';
+    if (rate >= 20) return 'bg-amber-500 text-white';
+    return 'bg-red-500 text-white';
   };
 
   return (
-    <Card className="shadow-none border border-gray-200 rounded-lg overflow-hidden bg-white">
-      <CardHeader className="pb-3 border-b border-gray-200">
+    <Card className="shadow-sm border border-gray-200 rounded-xl overflow-hidden bg-white hover:shadow-md transition-shadow duration-300">
+      <CardHeader className="pb-3 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
         <CardTitle className="text-xl text-gray-800">Customer Cohort Retention Rates</CardTitle>
       </CardHeader>
       <CardContent className="p-0 overflow-auto">
@@ -104,27 +120,32 @@ const CustomerCohort = ({ selectedPlatform }: CustomerCohortProps) => {
             <TableRow>
               <TableHead className="w-32 font-medium">Cohort</TableHead>
               <TableHead className="w-24 font-medium text-center">New Users</TableHead>
-              {Array.from({ length: 17 }, (_, i) => (
-                <TableHead key={i} className="w-16 font-medium text-center">{i + 1}</TableHead>
+              {Array.from({ length: 6 }, (_, i) => (
+                <TableHead key={i} className="w-16 font-medium text-center">Month {i + 1}</TableHead>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
             {cohortData.map((cohort, i) => (
-              <TableRow key={i} className="border-b hover:bg-gray-50">
+              <TableRow key={i} className="border-b hover:bg-gray-50 transition-colors">
                 <TableCell className="font-medium">{cohort.cohortDate}</TableCell>
                 <TableCell className="text-center">{cohort.size}</TableCell>
-                {cohort.retentionRates.map((retention, j) => (
-                  <TableCell key={j} className="p-0 text-center">
-                    <div className={`m-1 p-1 rounded ${getRetentionColor(retention.rate)}`}>
-                      {retention.rate}%
-                    </div>
-                  </TableCell>
-                ))}
-                {/* Fill empty cells for weeks without data */}
-                {Array.from({ length: 17 - cohort.retentionRates.length }, (_, i) => (
-                  <TableCell key={`empty-${i}`} />
-                ))}
+                {Array.from({ length: 6 }, (_, j) => {
+                  // Check if we have retention data for this month
+                  const retention = cohort.retentionRates[j];
+                  
+                  if (retention) {
+                    return (
+                      <TableCell key={j} className="p-0 text-center">
+                        <div className={`m-1 p-1 rounded-md ${getRetentionColor(retention.rate)} shadow-sm`}>
+                          {retention.rate}%
+                        </div>
+                      </TableCell>
+                    );
+                  } else {
+                    return <TableCell key={j} />;
+                  }
+                })}
               </TableRow>
             ))}
           </TableBody>

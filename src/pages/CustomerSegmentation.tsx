@@ -32,13 +32,13 @@ const CustomerSegmentation = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
-      <div className="sticky top-0 z-10 backdrop-blur-lg bg-white border-b border-gray-200">
-        <div className="container max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <div className="sticky top-0 z-10 backdrop-blur-xl bg-white/80 border-b border-gray-200 shadow-sm">
+        <div className="container max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-medium">Customer Segmentation</h1>
+              <h1 className="text-2xl font-semibold text-gray-800">Customer Segmentation</h1>
               <p className="text-muted-foreground">Customer insights and behavior analysis</p>
             </div>
             
@@ -51,19 +51,27 @@ const CustomerSegmentation = () => {
       </div>
 
       {/* Main content */}
-      <main className={`container max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+      <main className={`container max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 transition-all duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0 translate-y-4'}`}>
         <div className="space-y-8">
           {/* Overview cards */}
-          <CustomerOverview selectedPlatform={selectedPlatform} />
+          <div className="animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            <CustomerOverview selectedPlatform={selectedPlatform} />
+          </div>
           
-          {/* Customer distribution and geography */}
-          <CustomerDistribution selectedPlatform={selectedPlatform} />
+          {/* Customer distribution and demographics */}
+          <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <CustomerDistribution selectedPlatform={selectedPlatform} />
+          </div>
           
           {/* Customer Cohort Retention */}
-          <CustomerCohort selectedPlatform={selectedPlatform} />
+          <div className="animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+            <CustomerCohort selectedPlatform={selectedPlatform} />
+          </div>
           
           {/* Customer profiles table */}
-          <CustomerProfiles selectedPlatform={selectedPlatform} />
+          <div className="animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+            <CustomerProfiles selectedPlatform={selectedPlatform} />
+          </div>
         </div>
       </main>
     </div>
