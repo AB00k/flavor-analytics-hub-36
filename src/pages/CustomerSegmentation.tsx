@@ -1,0 +1,76 @@
+
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { 
+  ArrowLeft, 
+  Users, 
+  MapPin, 
+  CreditCard, 
+  TrendingUp,
+  Repeat,
+  Star
+} from 'lucide-react';
+import { Platform } from '@/utils/customerData';
+import { Button } from '@/components/ui/button';
+import CustomerOverview from '@/components/CustomerOverview';
+import CustomerSegmentationHeader from '@/components/CustomerSegmentationHeader';
+import CustomerDistribution from '@/components/CustomerDistribution';
+import CustomerProfiles from '@/components/CustomerProfiles';
+
+const CustomerSegmentation = () => {
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform | 'all'>('all');
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    // Animation delay
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="sticky top-0 z-10 backdrop-blur-lg bg-background/90 border-b border-border/40">
+        <div className="container max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <Button variant="outline" size="icon" asChild>
+                <Link to="/">
+                  <ArrowLeft className="h-4 w-4" />
+                </Link>
+              </Button>
+              <div>
+                <h1 className="text-2xl font-medium">Customer Segmentation</h1>
+                <p className="text-muted-foreground">Customer insights and behavior analysis</p>
+              </div>
+            </div>
+            
+            <CustomerSegmentationHeader 
+              selectedPlatform={selectedPlatform}
+              onSelectPlatform={setSelectedPlatform}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <main className={`container max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="space-y-8">
+          {/* Overview cards */}
+          <CustomerOverview selectedPlatform={selectedPlatform} />
+          
+          {/* Customer distribution and geography (50-50 split) */}
+          <CustomerDistribution selectedPlatform={selectedPlatform} />
+          
+          {/* Customer profiles table */}
+          <CustomerProfiles selectedPlatform={selectedPlatform} />
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default CustomerSegmentation;

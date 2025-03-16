@@ -1,5 +1,6 @@
 
 import { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Platform } from '@/utils/mockData';
 import PlatformSelector from '@/components/PlatformSelector';
 import MenuSummary from '@/components/MenuSummary';
@@ -7,6 +8,8 @@ import MenuPerformance from '@/components/MenuPerformance';
 import MenuItems from '@/components/MenuItems';
 import MenuGeography from '@/components/MenuGeography';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Users } from 'lucide-react';
 
 const Index = () => {
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>('all');
@@ -69,11 +72,20 @@ const Index = () => {
               <p className="text-muted-foreground mt-1">Performance insights across delivery platforms</p>
             </div>
             
-            <PlatformSelector 
-              selectedPlatform={selectedPlatform}
-              onSelectPlatform={handlePlatformChange}
-              className="md:px-2"
-            />
+            <div className="flex items-center gap-4">
+              <PlatformSelector 
+                selectedPlatform={selectedPlatform}
+                onSelectPlatform={handlePlatformChange}
+                className="md:px-2"
+              />
+              
+              <Button asChild variant="outline" className="flex items-center gap-2">
+                <Link to="/customers">
+                  <Users className="h-4 w-4" />
+                  <span>Customer Segmentation</span>
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
