@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Users, CreditCard, Star, TrendingUp, Repeat, Tag, ShoppingBag, Clock } from 'lucide-react';
+import { Users, CreditCard, Star, TrendingUp, Repeat, Tag } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   Customer, 
@@ -16,17 +16,6 @@ interface CustomerOverviewProps {
   selectedPlatform: Platform | 'all';
 }
 
-interface StatsCard {
-  title: string;
-  value: string | number;
-  icon: React.ReactNode;
-  change?: {
-    value: number;
-    positive: boolean;
-  };
-  subValue?: string;
-}
-
 const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
   const [stats, setStats] = useState({
     total: 0,
@@ -34,9 +23,7 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
     repeat: 0,
     premium: 0,
     promoUsage: 0,
-    avgSpent: 0,
-    avgItems: 0,
-    retentionRate: 0
+    avgSpent: 0
   });
 
   useEffect(() => {
@@ -52,8 +39,6 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
     const premiumCustomers = filteredCustomers.filter(c => c.customerType === 'premium').length;
     const promoUsers = filteredCustomers.filter(c => c.usedPromo).length;
     const totalSpent = filteredCustomers.reduce((sum, c) => sum + c.totalSpent, 0);
-    const totalItems = filteredCustomers.reduce((sum, c) => sum + c.avgItemsPerOrder, 0);
-    const longTermCustomers = filteredCustomers.filter(c => c.retentionMonths > 3).length;
     
     setStats({
       total,
@@ -61,94 +46,91 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
       repeat: repeatCustomers,
       premium: premiumCustomers,
       promoUsage: total ? Math.round((promoUsers / total) * 100) : 0,
-      avgSpent: total ? Math.round(totalSpent / total) : 0,
-      avgItems: total ? parseFloat((totalItems / total).toFixed(1)) : 0,
-      retentionRate: total ? Math.round((longTermCustomers / total) * 100) : 0
+      avgSpent: total ? Math.round(totalSpent / total) : 0
     });
   }, [selectedPlatform]);
 
-  // Create cards data
-  const cards: StatsCard[] = [
-    {
-      title: 'Total Customers',
-      value: stats.total,
-      icon: <div className="bg-blue-100 p-3 rounded-full"><Users className="h-5 w-5 text-blue-500" /></div>,
-      change: { value: 15, positive: true }
-    },
-    {
-      title: 'New Customers',
-      value: stats.new,
-      icon: <div className="bg-green-100 p-3 rounded-full"><TrendingUp className="h-5 w-5 text-green-500" /></div>,
-      change: { value: 12, positive: true },
-      subValue: `${stats.total ? Math.round((stats.new / stats.total) * 100) : 0}%`
-    },
-    {
-      title: 'Repeat Customers',
-      value: stats.repeat,
-      icon: <div className="bg-indigo-100 p-3 rounded-full"><Repeat className="h-5 w-5 text-indigo-500" /></div>,
-      change: { value: 8, positive: true },
-      subValue: `${stats.total ? Math.round((stats.repeat / stats.total) * 100) : 0}%`
-    },
-    {
-      title: 'Premium Customers',
-      value: stats.premium,
-      icon: <div className="bg-amber-100 p-3 rounded-full"><Star className="h-5 w-5 text-amber-500" /></div>,
-      change: { value: 5, positive: true },
-      subValue: `${stats.total ? Math.round((stats.premium / stats.total) * 100) : 0}%`
-    },
-    {
-      title: 'Promo Usage',
-      value: `${stats.promoUsage}%`,
-      icon: <div className="bg-purple-100 p-3 rounded-full"><Tag className="h-5 w-5 text-purple-500" /></div>,
-      change: { value: 0.3, positive: false }
-    },
-    {
-      title: 'Avg. Spending',
-      value: `AED ${stats.avgSpent}`,
-      icon: <div className="bg-red-100 p-3 rounded-full"><CreditCard className="h-5 w-5 text-red-500" /></div>,
-      change: { value: 8, positive: true }
-    },
-    {
-      title: 'Avg. Items',
-      value: stats.avgItems,
-      icon: <div className="bg-teal-100 p-3 rounded-full"><ShoppingBag className="h-5 w-5 text-teal-500" /></div>,
-      change: { value: 0.5, positive: true }
-    },
-    {
-      title: 'Retention Rate',
-      value: `${stats.retentionRate}%`,
-      icon: <div className="bg-orange-100 p-3 rounded-full"><Clock className="h-5 w-5 text-orange-500" /></div>,
-      change: { value: 3, positive: true }
-    }
-  ];
+  // Animation classes for staggered fade-in
+  const cardClasses = "bg-white border border-gray-200 rounded-lg shadow-sm";
   
   return (
     <section>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {cards.map((card, index) => (
-          <Card key={index} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-            <CardContent className="p-0">
-              <div className="p-5">
-                <div className="flex justify-between items-start mb-3">
-                  {card.icon}
-                  {card.change && (
-                    <span className={cn(
-                      "text-xs font-medium flex items-center",
-                      card.change.positive ? "text-green-500" : "text-red-500"
-                    )}>
-                      {card.change.positive ? '↑' : '↓'} {card.change.value}%
-                    </span>
-                  )}
-                </div>
-                <h3 className="text-sm text-gray-500 font-medium mb-1">{card.title}</h3>
-                <p className="text-2xl font-semibold">{card.value}</p>
-                {card.subValue && (
-                  <p className="text-xs text-gray-400 mt-0.5">{card.subValue}</p>
-                )}
+      <h2 className="text-lg font-medium mb-4">Customer Overview</h2>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <Card className={cn(cardClasses, "transition-all duration-300 delay-[0ms]")}>
+          <CardContent className="p-6">
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-blue-50 p-3 rounded-full mb-3">
+                <Users className="h-6 w-6 text-blue-500" />
               </div>
-            </CardContent>
-          </Card>
-        ))}
+              <p className="text-sm text-gray-500 mb-1">Total Customers</p>
+              <p className="text-2xl font-semibold">{stats.total}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className={cn(cardClasses, "transition-all duration-300 delay-[100ms]")}>
+          <CardContent className="p-6">
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-blue-50 p-3 rounded-full mb-3">
+                <TrendingUp className="h-6 w-6 text-blue-500" />
+              </div>
+              <p className="text-sm text-gray-500 mb-1">New Customers</p>
+              <p className="text-2xl font-semibold">{stats.new}</p>
+              <p className="text-xs text-gray-400">{stats.total ? Math.round((stats.new / stats.total) * 100) : 0}%</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className={cn(cardClasses, "transition-all duration-300 delay-[200ms]")}>
+          <CardContent className="p-6">
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-green-50 p-3 rounded-full mb-3">
+                <Repeat className="h-6 w-6 text-green-500" />
+              </div>
+              <p className="text-sm text-gray-500 mb-1">Repeat Customers</p>
+              <p className="text-2xl font-semibold">{stats.repeat}</p>
+              <p className="text-xs text-gray-400">{stats.total ? Math.round((stats.repeat / stats.total) * 100) : 0}%</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className={cn(cardClasses, "transition-all duration-300 delay-[300ms]")}>
+          <CardContent className="p-6">
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-amber-50 p-3 rounded-full mb-3">
+                <Star className="h-6 w-6 text-amber-500" />
+              </div>
+              <p className="text-sm text-gray-500 mb-1">Premium Customers</p>
+              <p className="text-2xl font-semibold">{stats.premium}</p>
+              <p className="text-xs text-gray-400">{stats.total ? Math.round((stats.premium / stats.total) * 100) : 0}%</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className={cn(cardClasses, "transition-all duration-300 delay-[400ms]")}>
+          <CardContent className="p-6">
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-purple-50 p-3 rounded-full mb-3">
+                <Tag className="h-6 w-6 text-purple-500" />
+              </div>
+              <p className="text-sm text-gray-500 mb-1">Promo Usage</p>
+              <p className="text-2xl font-semibold">{stats.promoUsage}%</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className={cn(cardClasses, "transition-all duration-300 delay-[500ms]")}>
+          <CardContent className="p-6">
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-indigo-50 p-3 rounded-full mb-3">
+                <CreditCard className="h-6 w-6 text-indigo-500" />
+              </div>
+              <p className="text-sm text-gray-500 mb-1">Avg. Spending</p>
+              <p className="text-2xl font-semibold">AED {stats.avgSpent}</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );

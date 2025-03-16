@@ -2,9 +2,9 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Platform, Customer, mockCustomers, customerTypeColors, paymentMethodColors } from '@/utils/customerData';
+import { Platform, Customer, mockCustomers, getCustomersByType, getCustomersByPaymentMethod, getCustomersByCity, getTopAreas, getRetentionDistribution, customerTypeColors, paymentMethodColors } from '@/utils/customerData';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
-import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { cn } from '@/lib/utils';
 
 interface CustomerDistributionProps {
@@ -34,13 +34,13 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
     const paymentData = calculatePaymentMethods(customers);
     const cityData = calculateCities(customers);
     const areaData = calculateTopAreas(customers);
-    const itemsData = calculateOrderItems(customers);
+    const retentionData = calculateRetention(customers);
     
     setCustomerTypes(typeData);
     setPaymentMethods(paymentData);
     setCities(cityData);
     setAreas(areaData);
-    setRetention(itemsData);
+    setRetention(retentionData);
   }, [selectedPlatform]);
 
   const calculateCustomerTypes = (customers: Customer[]) => {
@@ -96,19 +96,26 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
       .slice(0, 5);
   };
 
-  const calculateOrderItems = (customers: Customer[]) => {
-    return [
-      { name: '1 item', value: customers.filter(c => c.avgItemsPerOrder <= 1).length },
-      { name: '2 items', value: customers.filter(c => c.avgItemsPerOrder > 1 && c.avgItemsPerOrder <= 2).length },
-      { name: '3 items', value: customers.filter(c => c.avgItemsPerOrder > 2 && c.avgItemsPerOrder <= 3).length },
-      { name: '4 items', value: customers.filter(c => c.avgItemsPerOrder > 3 && c.avgItemsPerOrder <= 4).length },
-      { name: '5+ items', value: customers.filter(c => c.avgItemsPerOrder > 4).length },
+  const calculateRetention = (customers: Customer[]) => {
+    const ranges = [
+      { name: '< 1 month', min: 0, max: 1 },
+      { name: '1-3 months', min: 1, max: 3 },
+      { name: '3-6 months', min: 3, max: 6 },
+      { name: '6-12 months', min: 6, max: 12 },
+      { name: '> 12 months', min: 12, max: Infinity }
     ];
+    
+    return ranges.map(range => ({
+      name: range.name,
+      value: customers.filter(c => 
+        c.retentionMonths > range.min && c.retentionMonths <= range.max
+      ).length
+    }));
   };
 
   return (
-    <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card className="shadow-none border border-gray-200 rounded-lg overflow-hidden bg-white">
+    <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <Card className="h-full shadow-none border border-gray-200 rounded-lg overflow-hidden bg-white">
         <CardHeader className="pb-3 border-b border-gray-200">
           <div className="flex justify-between items-center">
             <CardTitle className="text-xl text-gray-800">Customer Demographics</CardTitle>
@@ -233,7 +240,7 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
         </CardContent>
       </Card>
 
-      <Card className="shadow-none border border-gray-200 rounded-lg overflow-hidden bg-white">
+      <Card className="h-full shadow-none border border-gray-200 rounded-lg overflow-hidden bg-white">
         <CardHeader className="pb-3 border-b border-gray-200">
           <div className="flex justify-between items-center">
             <CardTitle className="text-xl text-gray-800">Customer Geography</CardTitle>
@@ -255,7 +262,7 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
               <div className="h-80">
                 <ChartContainer
                   config={{
-                    cities: { color: "#6366f1" }
+                    cities: { color: "#8b5cf6" }
                   }}
                 >
                   <BarChart data={cities} layout="vertical">
@@ -263,7 +270,7 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
                     <XAxis type="number" />
                     <YAxis type="category" dataKey="name" width={100} />
                     <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="value" fill="#6366f1" radius={[0, 4, 4, 0]} />
+                    <Bar dataKey="value" fill="#8b5cf6" />
                   </BarChart>
                 </ChartContainer>
               </div>
@@ -280,7 +287,7 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
                     <XAxis type="number" />
                     <YAxis type="category" dataKey="name" width={120} />
                     <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="value" fill="#06b6d4" radius={[0, 4, 4, 0]} />
+                    <Bar dataKey="value" fill="#06b6d4" />
                   </BarChart>
                 </ChartContainer>
               </div>
@@ -289,15 +296,15 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
         </CardContent>
       </Card>
       
-      <Card className="shadow-none border border-gray-200 rounded-lg overflow-hidden bg-white">
+      <Card className="h-full shadow-none border border-gray-200 rounded-lg overflow-hidden bg-white">
         <CardHeader className="pb-3 border-b border-gray-200">
-          <CardTitle className="text-xl text-gray-800">Average Order Items</CardTitle>
+          <CardTitle className="text-xl text-gray-800">Customer Retention</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="h-80">
             <ChartContainer
               config={{
-                orders: { color: "#ef4444" }
+                retention: { color: "#f59e0b" }
               }}
             >
               <BarChart data={retention}>
@@ -305,7 +312,38 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
                 <XAxis dataKey="name" />
                 <YAxis />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="value" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="value" fill="#f59e0b" />
+              </BarChart>
+            </ChartContainer>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card className="h-full shadow-none border border-gray-200 rounded-lg overflow-hidden bg-white">
+        <CardHeader className="pb-3 border-b border-gray-200">
+          <CardTitle className="text-xl text-gray-800">Average Order Items</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="h-80">
+            <ChartContainer
+              config={{
+                orders: { color: "#10b981" }
+              }}
+            >
+              <BarChart 
+                data={[
+                  { name: '1 item', value: filteredCustomers.filter(c => c.avgItemsPerOrder <= 1).length },
+                  { name: '2 items', value: filteredCustomers.filter(c => c.avgItemsPerOrder > 1 && c.avgItemsPerOrder <= 2).length },
+                  { name: '3 items', value: filteredCustomers.filter(c => c.avgItemsPerOrder > 2 && c.avgItemsPerOrder <= 3).length },
+                  { name: '4 items', value: filteredCustomers.filter(c => c.avgItemsPerOrder > 3 && c.avgItemsPerOrder <= 4).length },
+                  { name: '5+ items', value: filteredCustomers.filter(c => c.avgItemsPerOrder > 4).length },
+                ]}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="value" fill="#10b981" />
               </BarChart>
             </ChartContainer>
           </div>
