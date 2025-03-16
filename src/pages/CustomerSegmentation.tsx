@@ -15,8 +15,8 @@ import { Button } from '@/components/ui/button';
 import CustomerOverview from '@/components/CustomerOverview';
 import CustomerSegmentationHeader from '@/components/CustomerSegmentationHeader';
 import CustomerDistribution from '@/components/CustomerDistribution';
-import CustomerProfiles from '@/components/CustomerProfiles';
 import CustomerCohort from '@/components/CustomerCohort';
+import CustomerProfiles from '@/components/CustomerProfiles';
 
 const CustomerSegmentation = () => {
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | 'all'>('all');

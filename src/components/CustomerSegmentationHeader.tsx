@@ -5,7 +5,7 @@ import { platformColors } from '@/utils/customerData';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, BarChart3 } from 'lucide-react';
+import { ArrowLeft, BarChart3, Users, Calendar } from 'lucide-react';
 
 interface CustomerSegmentationHeaderProps {
   selectedPlatform: Platform | 'all';
@@ -33,12 +33,19 @@ const CustomerSegmentationHeader = ({
         </Link>
       </Button>
       
-      <Button variant="outline" asChild className="flex items-center gap-2">
-        <Link to="/">
-          <BarChart3 className="h-4 w-4" />
-          <span>Menu Analytics</span>
-        </Link>
-      </Button>
+      <div className="flex space-x-2">
+        <Button variant="outline" asChild className="flex items-center gap-2">
+          <Link to="/">
+            <BarChart3 className="h-4 w-4" />
+            <span>Menu Analytics</span>
+          </Link>
+        </Button>
+        
+        <Button variant="default" className="flex items-center gap-2">
+          <Users className="h-4 w-4" />
+          <span>Customer Analytics</span>
+        </Button>
+      </div>
       
       <div className="ml-auto">
         <ToggleGroup 
