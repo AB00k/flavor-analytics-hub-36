@@ -16,6 +16,7 @@ import CustomerOverview from '@/components/CustomerOverview';
 import CustomerSegmentationHeader from '@/components/CustomerSegmentationHeader';
 import CustomerDistribution from '@/components/CustomerDistribution';
 import CustomerProfiles from '@/components/CustomerProfiles';
+import CustomerCohort from '@/components/CustomerCohort';
 
 const CustomerSegmentation = () => {
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | 'all'>('all');
@@ -31,21 +32,14 @@ const CustomerSegmentation = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="sticky top-0 z-10 backdrop-blur-lg bg-background/90 border-b border-border/40">
+      <div className="sticky top-0 z-10 backdrop-blur-lg bg-white border-b border-gray-200">
         <div className="container max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <Button variant="outline" size="icon" asChild>
-                <Link to="/">
-                  <ArrowLeft className="h-4 w-4" />
-                </Link>
-              </Button>
-              <div>
-                <h1 className="text-2xl font-medium">Customer Segmentation</h1>
-                <p className="text-muted-foreground">Customer insights and behavior analysis</p>
-              </div>
+            <div>
+              <h1 className="text-2xl font-medium">Customer Segmentation</h1>
+              <p className="text-muted-foreground">Customer insights and behavior analysis</p>
             </div>
             
             <CustomerSegmentationHeader 
@@ -62,8 +56,11 @@ const CustomerSegmentation = () => {
           {/* Overview cards */}
           <CustomerOverview selectedPlatform={selectedPlatform} />
           
-          {/* Customer distribution and geography (50-50 split) */}
+          {/* Customer distribution and geography */}
           <CustomerDistribution selectedPlatform={selectedPlatform} />
+          
+          {/* Customer Cohort Retention */}
+          <CustomerCohort selectedPlatform={selectedPlatform} />
           
           {/* Customer profiles table */}
           <CustomerProfiles selectedPlatform={selectedPlatform} />
