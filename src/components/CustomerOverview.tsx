@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Users, CreditCard, Star, TrendingUp, Repeat, Tag, Phone, Smartphone, ExternalLink, Info } from 'lucide-react';
+import { Users, CreditCard, Star, TrendingUp, Repeat, Tag, Phone, Smartphone, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -155,13 +155,13 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
             <div className="flex justify-between items-center">
               <CardTitle className="text-base font-medium">User Identification</CardTitle>
               <Button 
-                variant="ghost" 
+                variant="outline" 
                 size="sm" 
-                className="h-7 w-7 p-0 rounded-full bg-gray-100"
+                className="h-7 px-2 rounded-md text-xs flex items-center gap-1 bg-gray-50"
                 onClick={() => setShowPlatformDetails(!showPlatformDetails)}
               >
-                <Info className="h-3.5 w-3.5" />
-                <span className="sr-only">{showPlatformDetails ? "Hide" : "Show"} details</span>
+                {showPlatformDetails ? "Hide Details" : "Show Details"}
+                {showPlatformDetails ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
               </Button>
             </div>
           </CardHeader>
@@ -301,13 +301,13 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
             <div className="flex justify-between items-center">
               <CardTitle className="text-base font-medium">Revenue by Payment</CardTitle>
               <Button 
-                variant="ghost" 
+                variant="outline"
                 size="sm" 
-                className="h-7 w-7 p-0 rounded-full bg-gray-100"
+                className="h-7 px-2 rounded-md text-xs flex items-center gap-1 bg-gray-50"
                 onClick={() => setShowPaymentDetails(!showPaymentDetails)}
               >
-                <Info className="h-3.5 w-3.5" />
-                <span className="sr-only">{showPaymentDetails ? "Hide" : "Show"} details</span>
+                {showPaymentDetails ? "Hide Details" : "Show Details"}
+                {showPaymentDetails ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
               </Button>
             </div>
           </CardHeader>

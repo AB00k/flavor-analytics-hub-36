@@ -24,8 +24,8 @@ export const MenuGeography = ({ platform, className }: MenuGeographyProps) => {
     setLoaded(false);
     
     // Initialize all areas as selected
-    const initialAreaState = mockAreaSales.reduce((acc, area) => {
-      acc[area.area] = area.index < 2; // Only first 2 areas selected by default
+    const initialAreaState = mockAreaSales.reduce((acc, area, idx) => {
+      acc[area.area] = idx < 2; // Only first 2 areas selected by default
       return acc;
     }, {} as Record<string, boolean>);
     

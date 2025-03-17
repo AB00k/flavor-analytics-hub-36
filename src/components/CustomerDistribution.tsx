@@ -51,7 +51,6 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
     
     setFilteredCustomers(customers);
     
-    // Calculate distributions
     const cityDistribution = calculateCityDistribution(customers);
     const areaDistribution = calculateAreaDistribution(customers);
     const freqDistribution = calculateFrequencyByArea(customers);
@@ -60,9 +59,8 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
     setAreaData(areaDistribution);
     setFrequencyData(freqDistribution);
     
-    // Initialize selected areas
     const initialAreaState = freqDistribution.reduce((acc, area, index) => {
-      acc[area.area] = index < 2; // Only first 2 areas selected by default
+      acc[area.area] = index < 2;
       return acc;
     }, {} as Record<string, boolean>);
     
@@ -70,7 +68,6 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
   }, [selectedPlatform]);
 
   const calculateCityDistribution = (customers: Customer[]) => {
-    // Group customers by city
     const cityGroups = customers.reduce((acc, customer) => {
       if (!acc[customer.city]) {
         acc[customer.city] = { new: 0, repeat: 0, premium: 0, total: 0 };
@@ -82,7 +79,6 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
       return acc;
     }, {} as Record<string, { new: number, repeat: number, premium: number, total: number }>);
     
-    // Convert to array for charting
     return Object.entries(cityGroups)
       .map(([city, counts]) => ({
         city,
@@ -96,7 +92,6 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
   };
 
   const calculateAreaDistribution = (customers: Customer[]) => {
-    // Group customers by area
     const areaGroups = customers.reduce((acc, customer) => {
       if (!acc[customer.area]) {
         acc[customer.area] = { new: 0, repeat: 0, premium: 0, total: 0 };
@@ -108,7 +103,6 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
       return acc;
     }, {} as Record<string, { new: number, repeat: number, premium: number, total: number }>);
     
-    // Convert to array for charting
     return Object.entries(areaGroups)
       .map(([area, counts]) => ({
         area,
@@ -122,7 +116,6 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
   };
 
   const calculateFrequencyByArea = (customers: Customer[]) => {
-    // Calculate frequency (orders per customer) by area
     const areaFrequency = customers.reduce((acc, customer) => {
       if (!acc[customer.area]) {
         acc[customer.area] = {
@@ -138,12 +131,10 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
         };
       }
       
-      // Add to frequency count
       acc[customer.area][`${customer.customerType}Freq`] += customer.totalOrders;
       acc[customer.area][`${customer.customerType}Count`]++;
       acc[customer.area].totalOrders += customer.totalOrders;
       
-      // Count favorite items
       customer.favoriteItems.forEach(item => {
         acc[customer.area].topItems[item] = (acc[customer.area].topItems[item] || 0) + 1;
       });
@@ -161,15 +152,12 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
       topItems: Record<string, number>;
     }>);
     
-    // Calculate averages and get top items
     return Object.values(areaFrequency)
       .map(area => {
-        // Calculate average frequency (orders per customer) for each type
         const newAvg = area.newCount > 0 ? (area.newFreq / area.newCount).toFixed(1) : "0";
         const repeatAvg = area.repeatCount > 0 ? (area.repeatFreq / area.repeatCount).toFixed(1) : "0";
         const premiumAvg = area.premiumCount > 0 ? (area.premiumFreq / area.premiumCount).toFixed(1) : "0";
         
-        // Get top 3 items
         const topItems = Object.entries(area.topItems)
           .sort((a, b) => b[1] - a[1])
           .slice(0, 3)
@@ -188,10 +176,8 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
   };
 
   const handleAreaToggle = (area: string) => {
-    // Count how many are currently selected
     const currentlySelected = Object.values(selectedAreas).filter(Boolean).length;
     
-    // If we're trying to add another area and already at max, prevent it
     if (!selectedAreas[area] && currentlySelected >= visibleFrequencyAreas) {
       return;
     }
@@ -214,7 +200,6 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
     return Object.values(selectedAreas).filter(Boolean).length;
   };
 
-  // Filter areas based on selection
   const filteredFrequencyAreas = frequencyData.filter(area => selectedAreas[area.area]);
 
   return (
@@ -244,8 +229,7 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
         </CardHeader>
         <CardContent className="p-0">
           <Tabs value={activeTab} className="w-full">
-            {/* Geography Distribution Tab */}
-            <TabsContent value="geography" className="mt-0 p-6">
+            <TabsContent value="geography" className="mt-0 p-4">
               <div className="flex justify-end mb-4">
                 <Tabs defaultValue="cities" className="w-auto" onValueChange={setGeoMode}>
                   <TabsList className="grid grid-cols-2 w-[180px] bg-gray-100">
@@ -259,7 +243,7 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
                 </Tabs>
               </div>
               
-              <div className="h-80">
+              <div className="h-72">
                 <ChartContainer
                   config={{
                     New: { color: customerTypeColors.new },
@@ -270,6 +254,7 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
                   <BarChart 
                     data={geoMode === 'cities' ? cityData : areaData} 
                     layout="vertical"
+                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                   >
                     <defs>
                       <linearGradient id="newGradient" x1="0" y1="0" x2="1" y2="0">
@@ -290,7 +275,8 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
                     <YAxis 
                       type="category" 
                       dataKey={geoMode === 'cities' ? "city" : "area"} 
-                      width={120} 
+                      width={80}
+                      tick={{ fontSize: 12 }}
                     />
                     <ChartTooltip content={<ChartTooltipContent />} />
                     <Bar 
@@ -329,13 +315,12 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
                         />;
                       }}
                     />
-                    <Legend />
+                    <Legend iconSize={10} wrapperStyle={{ fontSize: 12, paddingTop: 10 }} />
                   </BarChart>
                 </ChartContainer>
               </div>
             </TabsContent>
             
-            {/* Customer Frequency Tab */}
             <TabsContent value="frequency" className="mt-0">
               <div className="p-4 flex justify-between items-center border-b">
                 <h3 className="font-medium text-gray-800">Order Frequency by Area</h3>
@@ -408,7 +393,7 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
                 </div>
               </div>
               
-              <div className="p-4 overflow-auto max-h-[450px]">
+              <div className="p-4 overflow-auto max-h-[410px]">
                 <div className="space-y-4">
                   {filteredFrequencyAreas.length > 0 ? (
                     filteredFrequencyAreas.map((area, index) => (

@@ -24,7 +24,7 @@ const CustomerSegmentation = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
       <div className="sticky top-0 z-10 backdrop-blur-xl bg-white/80 border-b border-gray-200 shadow-sm">
-        <div className="container max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+        <div className="container max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-semibold text-gray-800">Customer Segmentation</h1>
@@ -40,14 +40,14 @@ const CustomerSegmentation = () => {
       </div>
 
       {/* Main content */}
-      <main className={`container max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 transition-all duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0 translate-y-4'}`}>
-        <div className="space-y-8">
+      <main className={`container max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 transition-all duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0 translate-y-4'}`}>
+        <div className="space-y-6">
           {/* Overview cards */}
           <div className="animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
             <CustomerOverview selectedPlatform={selectedPlatform} />
           </div>
           
-          {/* Merged Customer Distribution and Demographics */}
+          {/* Customer Distribution and Demographics */}
           <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
             <CustomerDistribution selectedPlatform={selectedPlatform} />
           </div>
