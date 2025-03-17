@@ -21,28 +21,25 @@ const CustomerSegmentation = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="sticky top-0 z-10 backdrop-blur-xl bg-white/80 border-b border-gray-200 shadow-sm">
-        <div className="container max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-semibold text-gray-800">Customer Segmentation</h1>
-              <p className="text-muted-foreground">Customer insights and behavior analysis</p>
-            </div>
-            
-            <CustomerSegmentationHeader 
-              selectedPlatform={selectedPlatform}
-              onSelectPlatform={setSelectedPlatform}
-            />
-          </div>
-        </div>
+      <div className="py-6 px-6 md:px-8">
+        <h1 className="text-3xl font-bold text-purple-600">Customer Segmentation</h1>
+        <p className="text-gray-500 mt-1">Analysis and insights about your customer base</p>
+      </div>
+
+      {/* Platform Selection */}
+      <div className="px-6 md:px-8 mb-6">
+        <CustomerSegmentationHeader 
+          selectedPlatform={selectedPlatform}
+          onSelectPlatform={setSelectedPlatform}
+        />
       </div>
 
       {/* Main content */}
-      <main className={`container max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 transition-all duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0 translate-y-4'}`}>
-        <div className="space-y-6">
-          {/* Overview cards */}
+      <main className={`px-6 md:px-8 pb-12 transition-all duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0 translate-y-4'}`}>
+        <div className="space-y-8">
+          {/* Key metrics cards */}
           <div className="animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
             <CustomerOverview selectedPlatform={selectedPlatform} />
           </div>

@@ -123,15 +123,15 @@ export const MenuGeography = ({ platform, className }: MenuGeographyProps) => {
 
   return (
     <Card className={cn(
-      "h-full shadow-sm bg-gradient-to-br from-white to-background", 
-      platform !== 'all' ? `border-t-4 ${getPlatformBorderColor()}` : 'border-t-4 border-t-gray-500 bg-gradient-to-br from-gray-100/30 to-white', 
+      "h-full shadow-sm bg-white border border-gray-200 rounded-xl", 
+      platform !== 'all' ? `border-t-4 ${getPlatformBorderColor()}` : 'border-t-4 border-t-purple-500',
       className
     )}>
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 border-b border-gray-200">
         <CardTitle className="text-xl flex items-center">
           <MapPin className={cn(
             "h-5 w-5 mr-2",
-            platform !== 'all' ? `text-platform-${platform}` : 'text-gray-600'
+            platform !== 'all' ? `text-platform-${platform}` : 'text-purple-600'
           )} />
           Menu Geography Trends
         </CardTitle>
@@ -147,7 +147,7 @@ export const MenuGeography = ({ platform, className }: MenuGeographyProps) => {
                   size="sm" 
                   className={cn(
                     "flex items-center gap-2 text-sm",
-                    platform !== 'all' ? `border-platform-${platform}/30 text-platform-${platform}` : 'border-gray-300 text-gray-600'
+                    platform !== 'all' ? `border-platform-${platform}/30 text-platform-${platform}` : 'border-purple-300 text-purple-600'
                   )}
                 >
                   <Filter className="h-3.5 w-3.5" />
@@ -222,7 +222,7 @@ export const MenuGeography = ({ platform, className }: MenuGeographyProps) => {
                 <div 
                   key={area.area}
                   className={cn(
-                    "rounded-lg p-4 transition-all bg-gradient-to-br shadow-sm",
+                    "rounded-lg p-4 transition-all bg-gradient-to-br shadow-sm border border-gray-100",
                     getPlatformColor(),
                     !loaded && "opacity-0 translate-y-4",
                     loaded && "opacity-100 translate-y-0",
@@ -258,7 +258,7 @@ export const MenuGeography = ({ platform, className }: MenuGeographyProps) => {
                         <span>{getItemNameById(item.itemId)}</span>
                         <span className={cn(
                           "font-medium px-2 py-0.5 rounded-full text-xs",
-                          platform !== 'all' ? `bg-platform-${platform}/20 text-platform-${platform}` : 'bg-gray-200 text-gray-700'
+                          platform !== 'all' ? `bg-platform-${platform}/20 text-platform-${platform}` : 'bg-purple-100 text-purple-700'
                         )}>
                           {item.salesCount} sold
                         </span>

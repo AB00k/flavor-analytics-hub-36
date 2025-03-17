@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -204,7 +205,7 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
 
   return (
     <section>
-      <h2 className="text-lg font-semibold mb-4 text-gray-800">Customer Demographics & Geography</h2>
+      <h2 className="text-lg font-semibold mb-4 text-purple-700">Customer Demographics & Geography</h2>
       <Card className="shadow-sm border border-gray-200 rounded-xl overflow-hidden bg-white hover:shadow-md transition-shadow duration-300">
         <CardHeader className="pb-3 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
           <div className="flex justify-between items-center">
@@ -229,8 +230,8 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
         </CardHeader>
         <CardContent className="p-0">
           <Tabs value={activeTab} className="w-full">
-            <TabsContent value="geography" className="mt-0 p-4">
-              <div className="flex justify-end mb-4">
+            <TabsContent value="geography" className="mt-0">
+              <div className="flex justify-end p-4 pb-2">
                 <Tabs defaultValue="cities" className="w-auto" onValueChange={setGeoMode}>
                   <TabsList className="grid grid-cols-2 w-[180px] bg-gray-100">
                     <TabsTrigger value="cities" className="data-[state=active]:bg-white text-xs">
@@ -243,7 +244,7 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
                 </Tabs>
               </div>
               
-              <div className="h-72">
+              <div className="h-64 px-3 pb-4">
                 <ChartContainer
                   config={{
                     New: { color: customerTypeColors.new },
@@ -254,68 +255,67 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
                   <BarChart 
                     data={geoMode === 'cities' ? cityData : areaData} 
                     layout="vertical"
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                    margin={{ top: 5, right: 20, left: 70, bottom: 5 }}
+                    barSize={12}
+                    barGap={2}
                   >
                     <defs>
                       <linearGradient id="newGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor={`${customerTypeColors.new}CC`} />
-                        <stop offset="100%" stopColor={`${customerTypeColors.new}88`} />
+                        <stop offset="0%" stopColor="#6366F1" />
+                        <stop offset="100%" stopColor="#8B5CF6" />
                       </linearGradient>
                       <linearGradient id="repeatGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor={`${customerTypeColors.repeat}CC`} />
-                        <stop offset="100%" stopColor={`${customerTypeColors.repeat}88`} />
+                        <stop offset="0%" stopColor="#10B981" />
+                        <stop offset="100%" stopColor="#059669" />
                       </linearGradient>
                       <linearGradient id="premiumGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor={`${customerTypeColors.premium}CC`} />
-                        <stop offset="100%" stopColor={`${customerTypeColors.premium}88`} />
+                        <stop offset="0%" stopColor="#F59E0B" />
+                        <stop offset="100%" stopColor="#D97706" />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                    <XAxis type="number" />
+                    <XAxis 
+                      type="number" 
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fontSize: 10 }}
+                    />
                     <YAxis 
                       type="category" 
                       dataKey={geoMode === 'cities' ? "city" : "area"} 
-                      width={80}
-                      tick={{ fontSize: 12 }}
+                      width={70}
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fontSize: 11 }}
                     />
                     <ChartTooltip content={<ChartTooltipContent />} />
                     <Bar 
                       dataKey="New" 
                       stackId="stack" 
                       fill="url(#newGradient)" 
-                      shape={(props: any) => {
-                        return <Rectangle 
-                          {...props} 
-                          radius={[0, 0, 0, 0]} 
-                          className="shadow-sm hover:opacity-90 transition-opacity cursor-pointer"
-                        />;
-                      }}
+                      radius={[2, 2, 2, 2]}
+                      className="hover:opacity-90 transition-opacity cursor-pointer"
                     />
                     <Bar 
                       dataKey="Repeat" 
                       stackId="stack" 
                       fill="url(#repeatGradient)" 
-                      shape={(props: any) => {
-                        return <Rectangle 
-                          {...props} 
-                          radius={[0, 0, 0, 0]} 
-                          className="shadow-sm hover:opacity-90 transition-opacity cursor-pointer"
-                        />;
-                      }}
+                      radius={[2, 2, 2, 2]}
+                      className="hover:opacity-90 transition-opacity cursor-pointer"
                     />
                     <Bar 
                       dataKey="Premium" 
                       stackId="stack" 
                       fill="url(#premiumGradient)" 
-                      shape={(props: any) => {
-                        return <Rectangle 
-                          {...props} 
-                          radius={[0, 0, 0, 0]} 
-                          className="shadow-sm hover:opacity-90 transition-opacity cursor-pointer"
-                        />;
-                      }}
+                      radius={[2, 2, 2, 2]}
+                      className="hover:opacity-90 transition-opacity cursor-pointer"
                     />
-                    <Legend iconSize={10} wrapperStyle={{ fontSize: 12, paddingTop: 10 }} />
+                    <Legend 
+                      iconSize={8} 
+                      wrapperStyle={{ fontSize: 11, paddingTop: 5 }} 
+                      align="right"
+                      verticalAlign="bottom"
+                    />
                   </BarChart>
                 </ChartContainer>
               </div>
@@ -393,7 +393,7 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
                 </div>
               </div>
               
-              <div className="p-4 overflow-auto max-h-[410px]">
+              <div className="p-4 overflow-auto max-h-[360px]">
                 <div className="space-y-4">
                   {filteredFrequencyAreas.length > 0 ? (
                     filteredFrequencyAreas.map((area, index) => (
@@ -403,8 +403,8 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
                       >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center">
-                            <div className="p-2 bg-indigo-50 rounded-full mr-2">
-                              <MapPin className="h-4 w-4 text-indigo-500" />
+                            <div className="p-2 bg-purple-100 rounded-full mr-2">
+                              <MapPin className="h-4 w-4 text-purple-500" />
                             </div>
                             <h3 className="font-medium text-gray-900">{area.area}</h3>
                           </div>
@@ -415,15 +415,15 @@ const CustomerDistribution = ({ selectedPlatform }: CustomerDistributionProps) =
                         </div>
                         
                         <div className="grid grid-cols-3 gap-2 mb-3">
-                          <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-2 rounded text-center border border-blue-200 shadow-sm">
+                          <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-2 rounded text-center border border-indigo-200 shadow-sm">
                             <div className="flex items-center justify-between mb-1 px-1">
                               <p className="text-xs text-gray-500">New</p>
-                              <p className="text-xs bg-blue-200 text-blue-800 px-1 rounded">
+                              <p className="text-xs bg-indigo-200 text-indigo-800 px-1 rounded">
                                 <Users className="h-3 w-3 inline mr-0.5" />
                                 {area.newCount}
                               </p>
                             </div>
-                            <p className="text-lg font-semibold text-blue-600">{area.newAvg}</p>
+                            <p className="text-lg font-semibold text-indigo-600">{area.newAvg}</p>
                             <p className="text-xs text-gray-500">orders/customer</p>
                           </div>
                           <div className="bg-gradient-to-br from-green-50 to-green-100 p-2 rounded text-center border border-green-200 shadow-sm">
