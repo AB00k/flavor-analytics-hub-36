@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
 import { Platform, Customer, mockCustomers } from '@/utils/customerData';
+import { InfoIcon } from 'lucide-react';
 
 interface CustomerCohortProps {
   selectedPlatform: Platform | 'all';
@@ -11,14 +12,17 @@ interface CustomerCohortProps {
 interface CohortData {
   cohortDate: string;
   size: number;
+  avgFrequency: number;
   retentionRates: {
     week: number;
     rate: number;
+    frequency: number;
   }[];
 }
 
 const CustomerCohort = ({ selectedPlatform }: CustomerCohortProps) => {
   const [cohortData, setCohortData] = useState<CohortData[]>([]);
+  const [showFrequency, setShowFrequency] = useState(false);
   
   useEffect(() => {
     // Generate cohort data based on customer data
@@ -57,6 +61,10 @@ const CustomerCohort = ({ selectedPlatform }: CustomerCohortProps) => {
         const monthsAgo = getMonthsAgo(date);
         const availableDataPoints = Math.min(weeksCount, Math.max(1, 6 - monthsAgo));
         
+        // Calculate average frequency (orders per customer)
+        const totalOrders = customers.reduce((sum, customer) => sum + customer.totalOrders, 0);
+        const avgFrequency = totalOrders / customers.length;
+        
         const retentionRates = Array.from({ length: availableDataPoints }, (_, i) => {
           // Simulate decreasing retention rates over time
           const baseRate = Math.max(0.1, 0.85 - (i * 0.12));
@@ -64,9 +72,15 @@ const CustomerCohort = ({ selectedPlatform }: CustomerCohortProps) => {
           const randomFactor = Math.random() * 0.1 - 0.05; // -0.05 to 0.05
           const rate = Math.max(0.05, Math.min(0.9, baseRate + randomFactor));
           
+          // Calculate simulated frequency for each period
+          // This would decrease over time as retention decreases
+          const freqFactor = 1 - (i * 0.15);
+          const frequency = Math.max(1, avgFrequency * freqFactor);
+          
           return {
             week: i + 1,
-            rate: Math.round(rate * 100) // Convert to percentage
+            rate: Math.round(rate * 100), // Convert to percentage
+            frequency: parseFloat(frequency.toFixed(1))
           };
         });
         
@@ -78,6 +92,7 @@ const CustomerCohort = ({ selectedPlatform }: CustomerCohortProps) => {
         return {
           cohortDate: displayDate,
           size: customers.length,
+          avgFrequency: parseFloat(avgFrequency.toFixed(1)),
           retentionRates
         };
       })
@@ -112,16 +127,38 @@ const CustomerCohort = ({ selectedPlatform }: CustomerCohortProps) => {
   return (
     <Card className="shadow-sm border border-gray-200 rounded-xl overflow-hidden bg-white hover:shadow-md transition-shadow duration-300">
       <CardHeader className="pb-3 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
-        <CardTitle className="text-xl text-gray-800">Customer Cohort Retention Rates</CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-xl text-gray-800">Customer Cohort Retention Rates</CardTitle>
+          <div className="flex items-center">
+            <button
+              onClick={() => setShowFrequency(!showFrequency)}
+              className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full transition-colors"
+            >
+              {showFrequency ? "Hide Frequency" : "Show Frequency"}
+            </button>
+            <div className="relative group ml-2">
+              <InfoIcon className="h-4 w-4 text-gray-400 cursor-help" />
+              <div className="absolute bottom-full right-0 mb-2 w-64 bg-white p-2 rounded-md shadow-lg border border-gray-200 hidden group-hover:block z-50 text-xs">
+                <p>Retention shows the percentage of customers who return in subsequent months after their first purchase.</p>
+                <p className="mt-1">Frequency shows the average number of orders per customer in each period.</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="p-0 overflow-auto">
         <Table>
           <TableHeader className="bg-gray-50">
             <TableRow>
               <TableHead className="w-32 font-medium">Cohort</TableHead>
-              <TableHead className="w-24 font-medium text-center">New Users</TableHead>
+              <TableHead className="w-24 font-medium text-center">Customers</TableHead>
+              <TableHead className="w-24 font-medium text-center">
+                {showFrequency ? "Avg Orders" : ""}
+              </TableHead>
               {Array.from({ length: 6 }, (_, i) => (
-                <TableHead key={i} className="w-16 font-medium text-center">Month {i + 1}</TableHead>
+                <TableHead key={i} className="w-16 font-medium text-center">
+                  {showFrequency ? `M${i + 1} Ret/Freq` : `Month ${i + 1}`}
+                </TableHead>
               ))}
             </TableRow>
           </TableHeader>
@@ -130,6 +167,9 @@ const CustomerCohort = ({ selectedPlatform }: CustomerCohortProps) => {
               <TableRow key={i} className="border-b hover:bg-gray-50 transition-colors">
                 <TableCell className="font-medium">{cohort.cohortDate}</TableCell>
                 <TableCell className="text-center">{cohort.size}</TableCell>
+                <TableCell className="text-center">
+                  {showFrequency ? cohort.avgFrequency : ""}
+                </TableCell>
                 {Array.from({ length: 6 }, (_, j) => {
                   // Check if we have retention data for this month
                   const retention = cohort.retentionRates[j];
@@ -139,6 +179,11 @@ const CustomerCohort = ({ selectedPlatform }: CustomerCohortProps) => {
                       <TableCell key={j} className="p-0 text-center">
                         <div className={`m-1 p-1 rounded-md ${getRetentionColor(retention.rate)} shadow-sm`}>
                           {retention.rate}%
+                          {showFrequency && (
+                            <div className="text-xs opacity-90 mt-1 font-light">
+                              {retention.frequency} orders
+                            </div>
+                          )}
                         </div>
                       </TableCell>
                     );
