@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MapPin } from 'lucide-react';
+import { MapPin, Filter } from 'lucide-react';
 import { Platform, mockAreaSales, getItemNameById, platformLightColors } from '@/utils/mockData';
 import { cn } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -18,13 +18,14 @@ export const MenuGeography = ({ platform, className }: MenuGeographyProps) => {
   const [loaded, setLoaded] = useState(false);
   const [selectedAreas, setSelectedAreas] = useState<Record<string, boolean>>({});
   const [areaPopoverOpen, setAreaPopoverOpen] = useState(false);
+  const [visibleAreas, setVisibleAreas] = useState(2); // Default to show only 2 areas
 
   useEffect(() => {
     setLoaded(false);
     
     // Initialize all areas as selected
     const initialAreaState = mockAreaSales.reduce((acc, area) => {
-      acc[area.area] = true;
+      acc[area.area] = area.index < 2; // Only first 2 areas selected by default
       return acc;
     }, {} as Record<string, boolean>);
     
@@ -72,10 +73,45 @@ export const MenuGeography = ({ platform, className }: MenuGeographyProps) => {
   };
 
   const handleAreaToggle = (area: string) => {
+    // Count how many are currently selected
+    const currentlySelected = Object.values(selectedAreas).filter(Boolean).length;
+    
+    // If we're trying to add another area and already at max, prevent it
+    if (!selectedAreas[area] && currentlySelected >= visibleAreas) {
+      return;
+    }
+    
     setSelectedAreas(prev => ({
       ...prev,
       [area]: !prev[area]
     }));
+  };
+
+  const handleIncreaseVisibleAreas = () => {
+    setVisibleAreas(prev => Math.min(prev + 1, mockAreaSales.length));
+  };
+
+  const handleDecreaseVisibleAreas = () => {
+    // Calculate how many are currently selected
+    const currentlySelected = Object.values(selectedAreas).filter(Boolean).length;
+    
+    // If decreasing would cut off selected areas, deselect some
+    if (currentlySelected > visibleAreas - 1) {
+      // Find areas to deselect
+      const areasToAdjust = Object.entries(selectedAreas)
+        .filter(([_, isSelected]) => isSelected)
+        .slice(visibleAreas - 1);
+      
+      // Deselect the last selected area
+      if (areasToAdjust.length > 0) {
+        setSelectedAreas(prev => ({
+          ...prev,
+          [areasToAdjust[0][0]]: false
+        }));
+      }
+    }
+    
+    setVisibleAreas(prev => Math.max(prev - 1, 1));
   };
 
   const getSelectedAreaCount = () => {
@@ -101,105 +137,142 @@ export const MenuGeography = ({ platform, className }: MenuGeographyProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {/* Area selection popover */}
+        {/* Area selection controls */}
         <div className="mb-4 flex items-center justify-between">
-          <Popover open={areaPopoverOpen} onOpenChange={setAreaPopoverOpen}>
-            <PopoverTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className={cn(
-                  "flex items-center gap-2 text-sm",
-                  platform !== 'all' ? `border-platform-${platform}/30 text-platform-${platform}` : 'border-gray-300 text-gray-600'
-                )}
-              >
-                Selected Areas ({getSelectedAreaCount()})
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-64 p-0" align="start">
-              <div className="p-3 border-b">
-                <h4 className="font-medium text-sm">Select Areas</h4>
-                <p className="text-xs text-muted-foreground">Choose which areas to display</p>
-              </div>
-              <ScrollArea className="h-60">
-                <div className="p-3 grid grid-cols-1 gap-3">
-                  {mockAreaSales.map((area) => (
-                    <div key={area.area} className="flex items-center space-x-2">
-                      <Checkbox 
-                        id={`area-${area.area}`}
-                        checked={selectedAreas[area.area]}
-                        onCheckedChange={() => handleAreaToggle(area.area)}
-                      />
-                      <label 
-                        htmlFor={`area-${area.area}`}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        {area.area}
-                      </label>
-                    </div>
-                  ))}
+          <div className="flex items-center gap-2">
+            <Popover open={areaPopoverOpen} onOpenChange={setAreaPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className={cn(
+                    "flex items-center gap-2 text-sm",
+                    platform !== 'all' ? `border-platform-${platform}/30 text-platform-${platform}` : 'border-gray-300 text-gray-600'
+                  )}
+                >
+                  <Filter className="h-3.5 w-3.5" />
+                  Areas ({getSelectedAreaCount()})
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 p-0" align="start">
+                <div className="p-3 border-b">
+                  <h4 className="font-medium text-sm">Select Areas</h4>
+                  <p className="text-xs text-muted-foreground">Choose up to {visibleAreas} areas to display</p>
                 </div>
-              </ScrollArea>
-            </PopoverContent>
-          </Popover>
+                <ScrollArea className="h-60">
+                  <div className="p-3 grid grid-cols-1 gap-3">
+                    {mockAreaSales.map((area) => (
+                      <div key={area.area} className="flex items-center space-x-2">
+                        <Checkbox 
+                          id={`area-${area.area}`}
+                          checked={selectedAreas[area.area]}
+                          onCheckedChange={() => handleAreaToggle(area.area)}
+                          disabled={!selectedAreas[area.area] && getSelectedAreaCount() >= visibleAreas}
+                        />
+                        <label 
+                          htmlFor={`area-${area.area}`}
+                          className={cn(
+                            "text-sm font-medium leading-none peer-disabled:cursor-not-allowed",
+                            !selectedAreas[area.area] && getSelectedAreaCount() >= visibleAreas 
+                              ? "text-gray-400" 
+                              : "text-gray-700"
+                          )}
+                        >
+                          {area.area}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </PopoverContent>
+            </Popover>
+            
+            <div className="flex items-center space-x-1 bg-gray-100 rounded-md">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-7 w-7 p-0 rounded-l-md"
+                onClick={handleDecreaseVisibleAreas}
+                disabled={visibleAreas <= 1}
+              >
+                -
+              </Button>
+              <span className="text-xs px-1 font-medium">{visibleAreas}</span>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-7 w-7 p-0 rounded-r-md"
+                onClick={handleIncreaseVisibleAreas}
+                disabled={visibleAreas >= mockAreaSales.length}
+              >
+                +
+              </Button>
+            </div>
+          </div>
           
           <span className="text-xs text-muted-foreground">
-            {getSelectedAreaCount()} of {mockAreaSales.length} areas
+            Showing {getSelectedAreaCount()} areas
           </span>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {filteredAreas.map((area, areaIndex) => {
-            return (
-              <div 
-                key={area.area}
-                className={cn(
-                  "rounded-lg p-4 transition-all bg-gradient-to-br shadow-sm",
-                  getPlatformColor(),
-                  !loaded && "opacity-0 translate-y-4",
-                  loaded && "opacity-100 translate-y-0",
-                  "duration-300 ease-out",
-                  {
-                    "delay-[0ms]": areaIndex === 0,
-                    "delay-[100ms]": areaIndex === 1,
-                    "delay-[200ms]": areaIndex === 2,
-                    "delay-[300ms]": areaIndex === 3,
-                  }
-                )}
-              >
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-medium">{area.area}</h3>
+        <div className="grid grid-cols-1 gap-4 overflow-y-auto max-h-[calc(100vh-20rem)]">
+          {filteredAreas.length > 0 ? (
+            filteredAreas.map((area, areaIndex) => {
+              return (
+                <div 
+                  key={area.area}
+                  className={cn(
+                    "rounded-lg p-4 transition-all bg-gradient-to-br shadow-sm",
+                    getPlatformColor(),
+                    !loaded && "opacity-0 translate-y-4",
+                    loaded && "opacity-100 translate-y-0",
+                    "duration-300 ease-out",
+                    {
+                      "delay-[0ms]": areaIndex === 0,
+                      "delay-[100ms]": areaIndex === 1,
+                      "delay-[200ms]": areaIndex === 2,
+                      "delay-[300ms]": areaIndex === 3,
+                    }
+                  )}
+                >
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-medium">{area.area}</h3>
+                  </div>
+                  <ul className="space-y-2">
+                    {area.topItems.map((item, itemIndex) => (
+                      <li 
+                        key={item.itemId}
+                        className={cn(
+                          "flex justify-between items-center text-sm rounded-md px-3 py-2",
+                          getItemBgColor(itemIndex),
+                          !loaded && "opacity-0 translate-x-4",
+                          loaded && "opacity-100 translate-x-0",
+                          "transition-all duration-300 ease-out",
+                          {
+                            "delay-[100ms]": itemIndex === 0,
+                            "delay-[200ms]": itemIndex === 1,
+                            "delay-[300ms]": itemIndex === 2,
+                          }
+                        )}
+                      >
+                        <span>{getItemNameById(item.itemId)}</span>
+                        <span className={cn(
+                          "font-medium px-2 py-0.5 rounded-full text-xs",
+                          platform !== 'all' ? `bg-platform-${platform}/20 text-platform-${platform}` : 'bg-gray-200 text-gray-700'
+                        )}>
+                          {item.salesCount} sold
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="space-y-2">
-                  {area.topItems.map((item, itemIndex) => (
-                    <li 
-                      key={item.itemId}
-                      className={cn(
-                        "flex justify-between items-center text-sm rounded-md px-3 py-2",
-                        getItemBgColor(itemIndex),
-                        !loaded && "opacity-0 translate-x-4",
-                        loaded && "opacity-100 translate-x-0",
-                        "transition-all duration-300 ease-out",
-                        {
-                          "delay-[100ms]": itemIndex === 0,
-                          "delay-[200ms]": itemIndex === 1,
-                          "delay-[300ms]": itemIndex === 2,
-                        }
-                      )}
-                    >
-                      <span>{getItemNameById(item.itemId)}</span>
-                      <span className={cn(
-                        "font-medium px-2 py-0.5 rounded-full text-xs",
-                        platform !== 'all' ? `bg-platform-${platform}/20 text-platform-${platform}` : 'bg-gray-200 text-gray-700'
-                      )}>
-                        {item.salesCount} sold
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              No areas selected. Please select areas to display.
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

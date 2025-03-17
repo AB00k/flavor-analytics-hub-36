@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Users, CreditCard, Star, TrendingUp, Repeat, Tag, Phone, Smartphone, ExternalLink } from 'lucide-react';
+import { Users, CreditCard, Star, TrendingUp, Repeat, Tag, Phone, Smartphone, ExternalLink, Info } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -13,6 +13,7 @@ import {
 import { cn } from '@/lib/utils';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface CustomerOverviewProps {
   selectedPlatform: Platform | 'all';
@@ -29,6 +30,7 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
   });
   
   const [platformData, setPlatformData] = useState<any[]>([]);
+  const [platformTypeData, setPlatformTypeData] = useState<any[]>([]);
   const [showPlatformDetails, setShowPlatformDetails] = useState(false);
   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
 
@@ -61,8 +63,28 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
       color: platformColors[platform as Platform],
       percentage: Math.round((count as number / total) * 100)
     }));
+
+    // Calculate platform distribution by customer type
+    const platformTypeDistribution = {};
+    ['talabat', 'careem', 'noon', 'deliveroo', 'dine-in'].forEach(platform => {
+      platformTypeDistribution[platform] = {
+        platform,
+        new: 0,
+        repeat: 0,
+        premium: 0,
+        total: 0
+      };
+    });
+
+    filteredCustomers.forEach(customer => {
+      platformTypeDistribution[customer.platform][customer.customerType]++;
+      platformTypeDistribution[customer.platform].total++;
+    });
+
+    const platformTypeArray = Object.values(platformTypeDistribution);
     
     setPlatformData(platformDataArray);
+    setPlatformTypeData(platformTypeArray);
     
     setStats({
       total,
@@ -139,12 +161,13 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
             <div className="flex justify-between items-center">
               <CardTitle className="text-base font-medium">User Identification</CardTitle>
               <Button 
-                variant="ghost" 
+                variant="outline" 
                 size="sm" 
-                className="h-7 px-2 text-xs"
+                className="h-7 px-2 text-xs rounded-full"
                 onClick={() => setShowPlatformDetails(!showPlatformDetails)}
               >
-                {showPlatformDetails ? "Hide Details" : "Platform Details"} <ExternalLink className="h-3 w-3 ml-1" />
+                <Info className="h-3 w-3 mr-1" />
+                {showPlatformDetails ? "Hide" : "Details"}
               </Button>
             </div>
           </CardHeader>
@@ -164,7 +187,7 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">User ID</p>
-                        <p className="text-lg font-semibold">
+                        <p className="text-lg font-semibold text-blue-600">
                           {selectedPlatform === 'dine-in' 
                             ? Math.round(stats.total * 0.2) 
                             : stats.total}
@@ -177,7 +200,7 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">Phone Number</p>
-                        <p className="text-lg font-semibold">
+                        <p className="text-lg font-semibold text-purple-600">
                           {selectedPlatform === 'dine-in' 
                             ? Math.round(stats.total * 0.8) 
                             : 0}
@@ -199,23 +222,72 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  {['talabat', 'careem', 'noon', 'deliveroo', 'dine-in'].map((platform) => (
-                    <div 
-                      key={platform} 
-                      className="p-2 rounded-lg bg-gradient-to-br"
-                      style={{ 
-                        backgroundImage: `linear-gradient(to bottom right, ${platformColors[platform as Platform]}22, ${platformColors[platform as Platform]}11)`,
-                        borderLeft: `3px solid ${platformColors[platform as Platform]}`
-                      }}
-                    >
-                      <p className="font-medium capitalize">{platform}</p>
-                      <div className="flex justify-between mt-1">
-                        <span>User ID: {platform === 'dine-in' ? '20%' : '100%'}</span>
-                        <span>Phone: {platform === 'dine-in' ? '80%' : '0%'}</span>
+                <div className="space-y-2">
+                  <Tabs defaultValue="identity" className="w-full">
+                    <TabsList className="grid grid-cols-2 h-8">
+                      <TabsTrigger value="identity" className="text-xs">Identity Type</TabsTrigger>
+                      <TabsTrigger value="segments" className="text-xs">Customer Segments</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="identity" className="pt-2">
+                      <div className="grid grid-cols-2 gap-1 text-xs">
+                        {['talabat', 'careem', 'noon', 'deliveroo', 'dine-in'].map((platform) => (
+                          <div 
+                            key={platform} 
+                            className="p-2 rounded-lg bg-gradient-to-br"
+                            style={{ 
+                              backgroundImage: `linear-gradient(to bottom right, ${platformColors[platform as Platform]}22, ${platformColors[platform as Platform]}11)`,
+                              borderLeft: `3px solid ${platformColors[platform as Platform]}`
+                            }}
+                          >
+                            <p className="font-medium capitalize">{platform}</p>
+                            <div className="flex justify-between mt-1">
+                              <span>User ID: {platform === 'dine-in' ? '20%' : '100%'}</span>
+                              <span>Phone: {platform === 'dine-in' ? '80%' : '0%'}</span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    </div>
-                  ))}
+                    </TabsContent>
+                    <TabsContent value="segments" className="pt-2">
+                      <div className="grid grid-cols-2 gap-1 text-xs">
+                        {platformTypeData.map((platformData) => (
+                          <div 
+                            key={platformData.platform} 
+                            className="p-2 rounded-lg bg-gradient-to-br"
+                            style={{ 
+                              backgroundImage: `linear-gradient(to bottom right, ${platformColors[platformData.platform as Platform]}22, ${platformColors[platformData.platform as Platform]}11)`,
+                              borderLeft: `3px solid ${platformColors[platformData.platform as Platform]}`
+                            }}
+                          >
+                            <p className="font-medium capitalize">{platformData.platform}</p>
+                            <div className="grid grid-cols-3 gap-1 mt-1">
+                              <div className="flex items-center">
+                                <div 
+                                  className="w-2 h-2 rounded-full mr-1" 
+                                  style={{ background: customerTypeColors.new }}
+                                ></div>
+                                <span>New: {Math.round((platformData.new / platformData.total) * 100)}%</span>
+                              </div>
+                              <div className="flex items-center">
+                                <div 
+                                  className="w-2 h-2 rounded-full mr-1" 
+                                  style={{ background: customerTypeColors.repeat }}
+                                ></div>
+                                <span>Repeat: {Math.round((platformData.repeat / platformData.total) * 100)}%</span>
+                              </div>
+                              <div className="flex items-center">
+                                <div 
+                                  className="w-2 h-2 rounded-full mr-1" 
+                                  style={{ background: customerTypeColors.premium }}
+                                ></div>
+                                <span>Premium: {Math.round((platformData.premium / platformData.total) * 100)}%</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </TabsContent>
+                  </Tabs>
                 </div>
               )}
             </div>
@@ -228,12 +300,13 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
             <div className="flex justify-between items-center">
               <CardTitle className="text-base font-medium">Revenue by Payment</CardTitle>
               <Button 
-                variant="ghost" 
+                variant="outline" 
                 size="sm" 
-                className="h-7 px-2 text-xs"
+                className="h-7 px-2 text-xs rounded-full"
                 onClick={() => setShowPaymentDetails(!showPaymentDetails)}
               >
-                {showPaymentDetails ? "Hide Details" : "Platform Details"} <ExternalLink className="h-3 w-3 ml-1" />
+                <Info className="h-3 w-3 mr-1" />
+                {showPaymentDetails ? "Hide" : "Details"}
               </Button>
             </div>
           </CardHeader>
@@ -247,7 +320,7 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
               {!showPaymentDetails ? (
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-green-50 p-3 rounded-lg">
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 p-3 rounded-lg border border-green-200 shadow-sm">
                       <div className="flex items-center">
                         <div className="bg-green-100 p-1.5 rounded-full mr-2">
                           <CreditCard className="h-4 w-4 text-green-500" />
@@ -260,7 +333,7 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
                       <p className="text-xs text-gray-500">60% of revenue</p>
                     </div>
                     
-                    <div className="bg-amber-50 p-3 rounded-lg">
+                    <div className="bg-gradient-to-br from-amber-50 to-amber-100 p-3 rounded-lg border border-amber-200 shadow-sm">
                       <div className="flex items-center">
                         <div className="bg-amber-100 p-1.5 rounded-full mr-2">
                           <CreditCard className="h-4 w-4 text-amber-500" />
@@ -274,34 +347,57 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
                     </div>
                   </div>
                   
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden mt-3">
                     <div className="h-full bg-green-500 rounded-full" style={{ width: '60%' }} />
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  {['talabat', 'careem', 'noon', 'deliveroo', 'dine-in'].map((platform) => {
-                    // Randomize the online payment percentage a bit for each platform
-                    const onlinePercent = platform === 'dine-in' ? 40 : 70 + Math.floor(Math.random() * 20);
-                    
-                    return (
-                      <div 
-                        key={platform} 
-                        className="p-2 rounded-lg bg-gradient-to-br"
-                        style={{ 
-                          backgroundImage: `linear-gradient(to bottom right, ${platformColors[platform as Platform]}22, ${platformColors[platform as Platform]}11)`,
-                          borderLeft: `3px solid ${platformColors[platform as Platform]}`
-                        }}
-                      >
-                        <p className="font-medium capitalize">{platform}</p>
-                        <div className="flex justify-between mt-1">
-                          <span>Online: {onlinePercent}%</span>
-                          <span>Cash: {100 - onlinePercent}%</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                <Tabs defaultValue="payment" className="w-full">
+                  <TabsList className="grid grid-cols-1 h-8">
+                    <TabsTrigger value="payment" className="text-xs">Payment Methods by Platform</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="payment" className="pt-2">
+                    <div className="grid grid-cols-2 gap-2 text-xs overflow-y-auto max-h-24">
+                      {['talabat', 'careem', 'noon', 'deliveroo', 'dine-in'].map((platform) => {
+                        // Randomize the online payment percentage a bit for each platform
+                        const onlinePercent = platform === 'dine-in' ? 40 : 70 + Math.floor(Math.random() * 20);
+                        const platformRevenue = Math.round(stats.avgSpent * stats.total * (platformData.find(p => p.name.toLowerCase() === platform)?.percentage || 20) / 100);
+                        
+                        return (
+                          <div 
+                            key={platform} 
+                            className="p-2 rounded-lg shadow-sm"
+                            style={{ 
+                              backgroundImage: `linear-gradient(to bottom right, ${platformColors[platform as Platform]}22, ${platformColors[platform as Platform]}11)`,
+                              borderLeft: `3px solid ${platformColors[platform as Platform]}`
+                            }}
+                          >
+                            <div className="flex justify-between items-center">
+                              <p className="font-medium capitalize">{platform}</p>
+                              <p className="text-xs font-medium">AED {platformRevenue}</p>
+                            </div>
+                            <div className="flex justify-between mt-1">
+                              <span className="flex items-center">
+                                <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
+                                Online: {onlinePercent}%
+                              </span>
+                              <span className="flex items-center">
+                                <div className="w-2 h-2 bg-amber-500 rounded-full mr-1"></div>
+                                Cash: {100 - onlinePercent}%
+                              </span>
+                            </div>
+                            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden mt-1">
+                              <div 
+                                className="h-full bg-green-500 rounded-full" 
+                                style={{ width: `${onlinePercent}%` }} 
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </TabsContent>
+                </Tabs>
               )}
             </div>
           </CardContent>

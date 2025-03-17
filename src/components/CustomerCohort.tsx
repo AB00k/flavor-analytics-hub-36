@@ -66,15 +66,28 @@ const CustomerCohort = ({ selectedPlatform }: CustomerCohortProps) => {
         const avgFrequency = totalOrders / customers.length;
         
         const retentionRates = Array.from({ length: availableDataPoints }, (_, i) => {
-          // Simulate decreasing retention rates over time
-          const baseRate = Math.max(0.1, 0.85 - (i * 0.12));
+          // Simulate decreasing retention rates over time with a more realistic curve
+          // First month typically higher, then sharper drop, then gradual decline
+          let baseRate;
+          
+          if (i === 0) {
+            // First month retention (higher)
+            baseRate = Math.max(0.5, 0.85 - (monthsAgo * 0.05));
+          } else if (i === 1) {
+            // Second month (bigger drop)
+            baseRate = Math.max(0.3, 0.65 - (monthsAgo * 0.05));
+          } else {
+            // Subsequent months (gradual decline)
+            baseRate = Math.max(0.15, 0.55 - (i * 0.08) - (monthsAgo * 0.03));
+          }
+          
           // Add some randomness
           const randomFactor = Math.random() * 0.1 - 0.05; // -0.05 to 0.05
           const rate = Math.max(0.05, Math.min(0.9, baseRate + randomFactor));
           
           // Calculate simulated frequency for each period
           // This would decrease over time as retention decreases
-          const freqFactor = 1 - (i * 0.15);
+          const freqFactor = Math.max(0.3, 1 - (i * 0.15));
           const frequency = Math.max(1, avgFrequency * freqFactor);
           
           return {

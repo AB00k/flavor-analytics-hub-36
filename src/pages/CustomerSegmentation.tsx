@@ -1,17 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Users, 
-  MapPin, 
-  CreditCard, 
-  TrendingUp,
-  Repeat,
-  Star
-} from 'lucide-react';
 import { Platform } from '@/utils/customerData';
-import { Button } from '@/components/ui/button';
 import CustomerOverview from '@/components/CustomerOverview';
 import CustomerSegmentationHeader from '@/components/CustomerSegmentationHeader';
 import CustomerDistribution from '@/components/CustomerDistribution';
