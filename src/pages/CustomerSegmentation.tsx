@@ -47,7 +47,7 @@ const CustomerSegmentation = () => {
             <CustomerOverview selectedPlatform={selectedPlatform} />
           </div>
           
-          {/* Customer distribution and demographics */}
+          {/* Merged Customer Distribution and Demographics */}
           <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
             <CustomerDistribution selectedPlatform={selectedPlatform} />
           </div>

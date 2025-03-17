@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Users, CreditCard, Star, TrendingUp, Repeat, Tag, Phone, Smartphone, ExternalLink, Info } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -48,7 +47,6 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
     const promoUsers = filteredCustomers.filter(c => c.usedPromo).length;
     const totalSpent = filteredCustomers.reduce((sum, c) => sum + c.totalSpent, 0);
     
-    // Calculate platform distribution
     const platformDistribution = {};
     filteredCustomers.forEach(customer => {
       if (!platformDistribution[customer.platform]) {
@@ -64,7 +62,6 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
       percentage: Math.round((count as number / total) * 100)
     }));
 
-    // Calculate platform distribution by customer type
     const platformTypeDistribution = {};
     ['talabat', 'careem', 'noon', 'deliveroo', 'dine-in'].forEach(platform => {
       platformTypeDistribution[platform] = {
@@ -96,14 +93,12 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
     });
   }, [selectedPlatform]);
 
-  // Animation classes for staggered fade-in
   const cardClasses = "bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300";
   
   return (
     <section>
       <h2 className="text-lg font-medium mb-4">Customer Overview</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        {/* Platform Distribution Chart */}
         <Card className={cn(cardClasses, "col-span-1 md:col-span-1 overflow-hidden")}>
           <CardHeader className="pb-2 bg-gradient-to-r from-gray-50 to-white border-b">
             <CardTitle className="text-base font-medium">Platform Distribution</CardTitle>
@@ -155,19 +150,18 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
           </CardContent>
         </Card>
         
-        {/* ID Type Distribution Visualization */}
         <Card className={cn(cardClasses, "col-span-1 md:col-span-1 overflow-hidden")}>
           <CardHeader className="pb-2 bg-gradient-to-r from-gray-50 to-white border-b">
             <div className="flex justify-between items-center">
               <CardTitle className="text-base font-medium">User Identification</CardTitle>
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 size="sm" 
-                className="h-7 px-2 text-xs rounded-full"
+                className="h-7 w-7 p-0 rounded-full bg-gray-100"
                 onClick={() => setShowPlatformDetails(!showPlatformDetails)}
               >
-                <Info className="h-3 w-3 mr-1" />
-                {showPlatformDetails ? "Hide" : "Details"}
+                <Info className="h-3.5 w-3.5" />
+                <span className="sr-only">{showPlatformDetails ? "Hide" : "Show"} details</span>
               </Button>
             </div>
           </CardHeader>
@@ -180,32 +174,33 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
               
               {!showPlatformDetails ? (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="bg-blue-100 p-2 rounded-full mr-2">
-                        <Smartphone className="h-4 w-4 text-blue-500" />
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-2 rounded-lg border border-blue-200 shadow-sm">
+                      <div className="flex items-center">
+                        <div className="bg-blue-100 p-1.5 rounded-full mr-2">
+                          <Smartphone className="h-4 w-4 text-blue-500" />
+                        </div>
+                        <p className="text-sm">User ID</p>
                       </div>
-                      <div>
-                        <p className="text-sm text-gray-500">User ID</p>
-                        <p className="text-lg font-semibold text-blue-600">
-                          {selectedPlatform === 'dine-in' 
-                            ? Math.round(stats.total * 0.2) 
-                            : stats.total}
-                        </p>
-                      </div>
+                      <p className="text-lg font-semibold mt-1">
+                        {selectedPlatform === 'dine-in' 
+                          ? Math.round(stats.total * 0.2) 
+                          : stats.total}
+                      </p>
                     </div>
-                    <div className="flex items-center">
-                      <div className="bg-purple-100 p-2 rounded-full mr-2">
-                        <Phone className="h-4 w-4 text-purple-500" />
+                    
+                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-2 rounded-lg border border-purple-200 shadow-sm">
+                      <div className="flex items-center">
+                        <div className="bg-purple-100 p-1.5 rounded-full mr-2">
+                          <Phone className="h-4 w-4 text-purple-500" />
+                        </div>
+                        <p className="text-sm">Phone</p>
                       </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Phone Number</p>
-                        <p className="text-lg font-semibold text-purple-600">
-                          {selectedPlatform === 'dine-in' 
-                            ? Math.round(stats.total * 0.8) 
-                            : 0}
-                        </p>
-                      </div>
+                      <p className="text-lg font-semibold mt-1">
+                        {selectedPlatform === 'dine-in' 
+                          ? Math.round(stats.total * 0.8) 
+                          : 0}
+                      </p>
                     </div>
                   </div>
                   
@@ -217,49 +212,56 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
                   </div>
                   <p className="text-xs text-gray-500 text-center">
                     {selectedPlatform === 'dine-in' 
-                      ? "Dine-in customers primarily use phone numbers (80%)" 
-                      : "Delivery platform customers use user IDs (100%)"}
+                      ? "Dine-in: 80% phone, 20% user ID" 
+                      : "Delivery platforms: 100% user ID"}
                   </p>
                 </div>
               ) : (
                 <div className="space-y-2">
                   <Tabs defaultValue="identity" className="w-full">
                     <TabsList className="grid grid-cols-2 h-8">
-                      <TabsTrigger value="identity" className="text-xs">Identity Type</TabsTrigger>
-                      <TabsTrigger value="segments" className="text-xs">Customer Segments</TabsTrigger>
+                      <TabsTrigger value="identity" className="text-xs">ID Type</TabsTrigger>
+                      <TabsTrigger value="segments" className="text-xs">Segments</TabsTrigger>
                     </TabsList>
-                    <TabsContent value="identity" className="pt-2">
-                      <div className="grid grid-cols-2 gap-1 text-xs">
+                    <TabsContent value="identity" className="pt-2 h-[110px] overflow-auto">
+                      <div className="grid grid-cols-1 gap-1 text-xs">
                         {['talabat', 'careem', 'noon', 'deliveroo', 'dine-in'].map((platform) => (
                           <div 
                             key={platform} 
-                            className="p-2 rounded-lg bg-gradient-to-br"
+                            className="p-1.5 rounded-md flex justify-between items-center"
                             style={{ 
-                              backgroundImage: `linear-gradient(to bottom right, ${platformColors[platform as Platform]}22, ${platformColors[platform as Platform]}11)`,
+                              backgroundColor: `${platformColors[platform as Platform]}11`,
                               borderLeft: `3px solid ${platformColors[platform as Platform]}`
                             }}
                           >
-                            <p className="font-medium capitalize">{platform}</p>
-                            <div className="flex justify-between mt-1">
-                              <span>User ID: {platform === 'dine-in' ? '20%' : '100%'}</span>
-                              <span>Phone: {platform === 'dine-in' ? '80%' : '0%'}</span>
+                            <span className="font-medium capitalize">{platform}</span>
+                            <div className="flex gap-2">
+                              <span className="px-1.5 py-0.5 bg-blue-100 rounded text-blue-700 text-xs">
+                                ID: {platform === 'dine-in' ? '20%' : '100%'}
+                              </span>
+                              <span className="px-1.5 py-0.5 bg-purple-100 rounded text-purple-700 text-xs">
+                                Phone: {platform === 'dine-in' ? '80%' : '0%'}
+                              </span>
                             </div>
                           </div>
                         ))}
                       </div>
                     </TabsContent>
-                    <TabsContent value="segments" className="pt-2">
-                      <div className="grid grid-cols-2 gap-1 text-xs">
+                    <TabsContent value="segments" className="pt-2 h-[110px] overflow-auto">
+                      <div className="grid grid-cols-1 gap-1 text-xs">
                         {platformTypeData.map((platformData) => (
                           <div 
                             key={platformData.platform} 
-                            className="p-2 rounded-lg bg-gradient-to-br"
+                            className="p-1.5 rounded-md"
                             style={{ 
-                              backgroundImage: `linear-gradient(to bottom right, ${platformColors[platformData.platform as Platform]}22, ${platformColors[platformData.platform as Platform]}11)`,
+                              backgroundColor: `${platformColors[platformData.platform as Platform]}11`,
                               borderLeft: `3px solid ${platformColors[platformData.platform as Platform]}`
                             }}
                           >
-                            <p className="font-medium capitalize">{platformData.platform}</p>
+                            <div className="flex justify-between items-center">
+                              <span className="font-medium capitalize">{platformData.platform}</span>
+                              <span className="text-xs font-medium">{platformData.total} users</span>
+                            </div>
                             <div className="grid grid-cols-3 gap-1 mt-1">
                               <div className="flex items-center">
                                 <div 
@@ -294,19 +296,18 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
           </CardContent>
         </Card>
         
-        {/* Revenue per platform */}
         <Card className={cn(cardClasses, "col-span-1 md:col-span-1 overflow-hidden")}>
           <CardHeader className="pb-2 bg-gradient-to-r from-gray-50 to-white border-b">
             <div className="flex justify-between items-center">
               <CardTitle className="text-base font-medium">Revenue by Payment</CardTitle>
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 size="sm" 
-                className="h-7 px-2 text-xs rounded-full"
+                className="h-7 w-7 p-0 rounded-full bg-gray-100"
                 onClick={() => setShowPaymentDetails(!showPaymentDetails)}
               >
-                <Info className="h-3 w-3 mr-1" />
-                {showPaymentDetails ? "Hide" : "Details"}
+                <Info className="h-3.5 w-3.5" />
+                <span className="sr-only">{showPaymentDetails ? "Hide" : "Show"} details</span>
               </Button>
             </div>
           </CardHeader>
@@ -354,43 +355,34 @@ const CustomerOverview = ({ selectedPlatform }: CustomerOverviewProps) => {
               ) : (
                 <Tabs defaultValue="payment" className="w-full">
                   <TabsList className="grid grid-cols-1 h-8">
-                    <TabsTrigger value="payment" className="text-xs">Payment Methods by Platform</TabsTrigger>
+                    <TabsTrigger value="payment" className="text-xs">Payment by Platform</TabsTrigger>
                   </TabsList>
-                  <TabsContent value="payment" className="pt-2">
-                    <div className="grid grid-cols-2 gap-2 text-xs overflow-y-auto max-h-24">
+                  <TabsContent value="payment" className="pt-2 h-[110px] overflow-auto">
+                    <div className="grid grid-cols-1 gap-1 text-xs">
                       {['talabat', 'careem', 'noon', 'deliveroo', 'dine-in'].map((platform) => {
-                        // Randomize the online payment percentage a bit for each platform
                         const onlinePercent = platform === 'dine-in' ? 40 : 70 + Math.floor(Math.random() * 20);
                         const platformRevenue = Math.round(stats.avgSpent * stats.total * (platformData.find(p => p.name.toLowerCase() === platform)?.percentage || 20) / 100);
                         
                         return (
                           <div 
                             key={platform} 
-                            className="p-2 rounded-lg shadow-sm"
+                            className="p-1.5 rounded-md flex flex-col"
                             style={{ 
-                              backgroundImage: `linear-gradient(to bottom right, ${platformColors[platform as Platform]}22, ${platformColors[platform as Platform]}11)`,
+                              backgroundColor: `${platformColors[platform as Platform]}11`,
                               borderLeft: `3px solid ${platformColors[platform as Platform]}`
                             }}
                           >
                             <div className="flex justify-between items-center">
-                              <p className="font-medium capitalize">{platform}</p>
-                              <p className="text-xs font-medium">AED {platformRevenue}</p>
+                              <span className="font-medium capitalize">{platform}</span>
+                              <span className="text-xs font-medium">AED {platformRevenue}</span>
                             </div>
-                            <div className="flex justify-between mt-1">
-                              <span className="flex items-center">
-                                <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
+                            <div className="flex gap-2 mt-1">
+                              <span className="px-1.5 py-0.5 bg-green-100 rounded text-green-700 text-xs">
                                 Online: {onlinePercent}%
                               </span>
-                              <span className="flex items-center">
-                                <div className="w-2 h-2 bg-amber-500 rounded-full mr-1"></div>
+                              <span className="px-1.5 py-0.5 bg-amber-100 rounded text-amber-700 text-xs">
                                 Cash: {100 - onlinePercent}%
                               </span>
-                            </div>
-                            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden mt-1">
-                              <div 
-                                className="h-full bg-green-500 rounded-full" 
-                                style={{ width: `${onlinePercent}%` }} 
-                              />
                             </div>
                           </div>
                         );
