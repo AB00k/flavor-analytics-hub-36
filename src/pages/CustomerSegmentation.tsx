@@ -23,13 +23,13 @@ const CustomerSegmentation = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="py-6 px-6 md:px-8">
+      <div className="py-6 px-6 md:px-8 bg-gradient-to-r from-purple-100 to-purple-50">
         <h1 className="text-3xl font-bold text-purple-600">Customer Segmentation</h1>
         <p className="text-gray-500 mt-1">Analysis and insights about your customer base</p>
       </div>
 
       {/* Platform Selection */}
-      <div className="px-6 md:px-8 mb-6">
+      <div className="px-6 md:px-8 mb-6 bg-white py-3 shadow-sm">
         <CustomerSegmentationHeader 
           selectedPlatform={selectedPlatform}
           onSelectPlatform={setSelectedPlatform}

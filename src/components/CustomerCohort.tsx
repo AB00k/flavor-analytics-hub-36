@@ -36,93 +36,77 @@ const CustomerCohort = ({ selectedPlatform }: CustomerCohortProps) => {
       ? [...mockCustomers] 
       : mockCustomers.filter(c => c.platform === platform);
     
-    // Group customers by first order month
-    const cohortGroups: Record<string, Customer[]> = {};
+    // Define the cohort months we want to display (Sep 2024 - Feb 2025)
+    const cohortMonths = [
+      { month: 'Sep', year: 2024, displayDate: 'Sep 2024', monthsAgo: 6 },
+      { month: 'Oct', year: 2024, displayDate: 'Oct 2024', monthsAgo: 5 },
+      { month: 'Nov', year: 2024, displayDate: 'Nov 2024', monthsAgo: 4 },
+      { month: 'Dec', year: 2024, displayDate: 'Dec 2024', monthsAgo: 3 },
+      { month: 'Jan', year: 2025, displayDate: 'Jan 2025', monthsAgo: 2 },
+      { month: 'Feb', year: 2025, displayDate: 'Feb 2025', monthsAgo: 1 },
+    ];
     
-    customers.forEach(customer => {
-      const date = new Date(customer.firstOrderDate);
-      const cohortKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    // Generate synthetic cohort data for each month
+    const cohorts = cohortMonths.map(({ month, year, displayDate, monthsAgo }) => {
+      // Simulate customer count based on month (more customers in recent months)
+      const baseSize = 100 + Math.floor(Math.random() * 50);
+      const monthFactor = 1 + (monthsAgo * 0.05);
+      const size = Math.round(baseSize / monthFactor);
       
-      if (!cohortGroups[cohortKey]) {
-        cohortGroups[cohortKey] = [];
-      }
+      // Calculate available data points based on months ago
+      // More recent cohorts will have fewer data points
+      const availableDataPoints = Math.min(6, monthsAgo);
       
-      cohortGroups[cohortKey].push(customer);
-    });
-    
-    // Convert to array and sort by date
-    const cohorts = Object.entries(cohortGroups)
-      .map(([date, customers]) => {
-        // Calculate retention rates by weeks (simulation)
-        const weeksCount = 6; // Display up to 6 weeks retention
+      // Calculate average frequency (orders per customer)
+      const avgFrequency = parseFloat((2.5 + Math.random() * 0.5).toFixed(1));
+      
+      const retentionRates = Array.from({ length: availableDataPoints }, (_, i) => {
+        // Month 1 should always have a value for all cohorts
+        // Subsequent months should only have values based on how many months have passed
+        if (i >= monthsAgo) {
+          return null; // No data available yet for future months
+        }
         
-        // Calculate decreasing number of retention data points based on date
-        // More recent cohorts will have fewer data points
-        const monthsAgo = getMonthsAgo(date);
-        const availableDataPoints = Math.min(weeksCount, Math.max(1, 6 - monthsAgo));
+        // Simulate decreasing retention rates over time with a more realistic curve
+        // First month typically higher, then sharper drop, then gradual decline
+        let baseRate;
         
-        // Calculate average frequency (orders per customer)
-        const totalOrders = customers.reduce((sum, customer) => sum + customer.totalOrders, 0);
-        const avgFrequency = totalOrders / customers.length;
+        if (i === 0) {
+          // First month retention (higher)
+          baseRate = Math.max(0.5, 0.85 - (monthsAgo * 0.02));
+        } else if (i === 1) {
+          // Second month (bigger drop)
+          baseRate = Math.max(0.3, 0.65 - (monthsAgo * 0.02));
+        } else {
+          // Subsequent months (gradual decline)
+          baseRate = Math.max(0.15, 0.55 - (i * 0.08) - (monthsAgo * 0.01));
+        }
         
-        const retentionRates = Array.from({ length: availableDataPoints }, (_, i) => {
-          // Simulate decreasing retention rates over time with a more realistic curve
-          // First month typically higher, then sharper drop, then gradual decline
-          let baseRate;
-          
-          if (i === 0) {
-            // First month retention (higher)
-            baseRate = Math.max(0.5, 0.85 - (monthsAgo * 0.05));
-          } else if (i === 1) {
-            // Second month (bigger drop)
-            baseRate = Math.max(0.3, 0.65 - (monthsAgo * 0.05));
-          } else {
-            // Subsequent months (gradual decline)
-            baseRate = Math.max(0.15, 0.55 - (i * 0.08) - (monthsAgo * 0.03));
-          }
-          
-          // Add some randomness
-          const randomFactor = Math.random() * 0.1 - 0.05; // -0.05 to 0.05
-          const rate = Math.max(0.05, Math.min(0.9, baseRate + randomFactor));
-          
-          // Calculate simulated frequency for each period
-          // This would decrease over time as retention decreases
-          const freqFactor = Math.max(0.3, 1 - (i * 0.15));
-          const frequency = Math.max(1, avgFrequency * freqFactor);
-          
-          return {
-            week: i + 1,
-            rate: Math.round(rate * 100), // Convert to percentage
-            frequency: parseFloat(frequency.toFixed(1))
-          };
-        });
+        // Add some randomness
+        const randomFactor = Math.random() * 0.1 - 0.05; // -0.05 to 0.05
+        const rate = Math.max(0.05, Math.min(0.9, baseRate + randomFactor));
         
-        // Format date for display (YYYY-MM to MMM YYYY)
-        const [year, month] = date.split('-');
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const displayDate = `${monthNames[parseInt(month) - 1]} ${year}`;
+        // Calculate simulated frequency for each period
+        // This would decrease over time as retention decreases
+        const freqFactor = Math.max(0.3, 1 - (i * 0.15));
+        const frequency = Math.max(1, avgFrequency * freqFactor);
         
         return {
-          cohortDate: displayDate,
-          size: customers.length,
-          avgFrequency: parseFloat(avgFrequency.toFixed(1)),
-          retentionRates
+          week: i + 1,
+          rate: Math.round(rate * 100), // Convert to percentage
+          frequency: parseFloat(frequency.toFixed(1))
         };
-      })
-      .sort((a, b) => a.cohortDate.localeCompare(b.cohortDate))
-      .slice(-6); // Only show the last 6 cohorts
+      }).filter(Boolean); // Filter out null values
+      
+      return {
+        cohortDate: displayDate,
+        size,
+        avgFrequency,
+        retentionRates
+      };
+    });
     
     return cohorts;
-  };
-  
-  // Helper function to calculate months ago
-  const getMonthsAgo = (dateStr: string): number => {
-    const [year, month] = dateStr.split('-').map(n => parseInt(n));
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1;
-    
-    return (currentYear - year) * 12 + (currentMonth - month);
   };
 
   // Function to determine color based on retention rate
